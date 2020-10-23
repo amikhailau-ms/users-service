@@ -1,0 +1,17 @@
+os: linux
+arch: arm64
+dist: focal
+
+sudo: true
+language: go
+services:
+    - docker
+    
+before_script:
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - make fmt && git diff --exit-code
+    - make test 
+
+script:
+    - make docker
+    - make push IMAGE_VERSION=latest

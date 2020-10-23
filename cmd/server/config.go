@@ -29,29 +29,6 @@ const (
 	defaultDatabaseSSL      = "disable"
 	defaultDatabaseOption   = ""
 
-	// PubSub
-	defaultPubsubEnable       = false
-	defaultPubsubAddress      = "pubsub.atlas"
-	defaultPubsubPort         = "5555"
-	defaultPubsubPublish      = "example_hello"
-	defaultPubsubSubscribe    = "example_hello"
-	defaultPubsubSubscriberID = "example_hello_subscriberid"
-
-	// Authz
-	defaultAuthzEnable  = false
-	defaultAuthzAddress = "authz.atlas"
-	defaultAuthzPort    = "5555"
-
-	// Audit Logging
-	defaultAuditEnable  = false
-	defaultAuditAddress = "audit.atlas"
-	defaultAuditPort    = "5555"
-
-	// Tagging
-	defaultTaggingEnable  = false
-	defaultTaggingAddress = "tagging.atlas"
-	defaultTaggingPort    = "5555"
-
 	// Health
 	defaultInternalEnable    = false
 	defaultInternalAddress   = "0.0.0.0"
@@ -93,25 +70,6 @@ var (
 	flagDatabasePassword = pflag.String("database.password", defaultDatabasePassword, "database password")
 	flagDatabaseSSL      = pflag.String("database.ssl", defaultDatabaseSSL, "database ssl mode")
 	flagDatabaseOption   = pflag.String("database.option", defaultDatabaseOption, "define custom option to db driver")
-
-	flagPubsubEnable       = pflag.Bool("atlas.pubsub.enable", defaultPubsubEnable, "enable application with pubsub")
-	flagPubsubAddress      = pflag.String("atlas.pubsub.address", defaultPubsubAddress, "address or FQDN of the pubsub service")
-	flagPubsubPort         = pflag.String("atlas.pubsub.port", defaultPubsubPort, "port of the pubsub service")
-	flagPubsubPublish      = pflag.String("atlas.pubsub.publish", defaultPubsubPublish, "publisher topic")
-	flagPubsubSubscribe    = pflag.String("atlas.pubsub.subscribe", defaultPubsubSubscribe, "subscriber topic")
-	flagPubsubSubscriberID = pflag.String("atlas.pubsub.subscriber.id", defaultPubsubSubscriberID, "subscriber id")
-
-	flagAuthzEnable  = pflag.Bool("atlas.authz.enable", defaultAuthzEnable, "enable application with authorization")
-	flagAuthzAddress = pflag.String("atlas.authz.address", defaultAuthzAddress, "address or FQDN of the authorization service")
-	flagAuthzPort    = pflag.String("atlas.authz.port", defaultAuthzPort, "port of the authorization service")
-
-	flagAuditEnable  = pflag.Bool("atlas.audit.enable", defaultAuditEnable, "enable logging of gRPC requests on Atlas audit service")
-	flagAuditAddress = pflag.String("atlas.audit.address", defaultAuditAddress, "address or FQDN of Atlas audit log service")
-	flagAuditPort    = pflag.String("atlas.audit.port", defaultAuditPort, "port of Atlas audit log service")
-
-	flagTaggingEnable  = pflag.Bool("atlas.tagging.enable", defaultTaggingEnable, "enable tagging")
-	flagTaggingAddress = pflag.String("atlas.tagging.address", defaultTaggingAddress, "address or FQDN of Atlas tagging service")
-	flagTaggingPort    = pflag.String("atlas.tagging.port", defaultTaggingPort, "port of Atlas tagging service")
 
 	flagInternalEnable    = pflag.Bool("internal.enable", defaultInternalEnable, "enable internal http server")
 	flagInternalAddress   = pflag.String("internal.address", defaultInternalAddress, "address of internal http server")

@@ -19,7 +19,7 @@ SERVER_DOCKERFILE       ?= $(DOCKERFILE_PATH)/Dockerfile
 SRCROOT_ON_HOST         ?= $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 SRCROOT_IN_CONTAINER    ?= /go/src/$(PROJECT_ROOT)
 DOCKER_RUNNER           ?= docker run -u `id -u`:`id -g` --rm -v $(SRCROOT_ON_HOST):$(SRCROOT_IN_CONTAINER)
-DOCKER_GENERATOR        ?= infoblox/atlas-gentool:latest
+DOCKER_GENERATOR        ?= amikhailau/gentool:latest
 GENERATOR               ?= $(DOCKER_RUNNER) $(DOCKER_GENERATOR)
 
 # configuration for building on host machine
