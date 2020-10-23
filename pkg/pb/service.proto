@@ -1,0 +1,281 @@
+syntax = "proto3";
+
+package service;
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "github.com/envoyproxy/protoc-gen-validate/validate/validate.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+import "github.com/infobloxopen/protoc-gen-gorm/options/gorm.proto";
+
+import "google/protobuf/field_mask.proto";
+//import "github.com/infobloxopen/protoc-gen-gorm/types/types.proto";
+import "github.com/infobloxopen/atlas-app-toolkit/query/collection_operators.proto";
+import "github.com/infobloxopen/atlas-app-toolkit/rpc/resource/resource.proto";
+import "github.com/infobloxopen/protoc-gen-atlas-query-validate/options/query_validate.proto";
+import "github.com/infobloxopen/protoc-gen-atlas-validate/options/atlas_validate.proto";
+
+
+option go_package = "github.com/amikhailau/users-service/pkg/pb;pb";
+
+// The UsersService service, GetVersion RPC, and Version message
+// make up a simple "starter" example. It allows the Atlas CLI to generate an
+// end-to-end example for the sake of demonstration. Feel free to change 
+// GetVersion to better-suit how your versioning system, or get rid of it entirely.
+
+// Here are some helpful resources to aid you in your protobuf quest:
+// https://github.com/infobloxopen/atlas-contacts-app/blob/master/proto/contacts.proto
+// https://developers.google.com/protocol-buffers/docs/proto
+// https://github.com/grpc-ecosystem/grpc-gateway
+// https://developers.google.com/protocol-buffers/docs/style
+
+// Happy protobuffing!
+
+// TODO: Write a protobuf schema for the UsersService service. The 
+// messages and RPCs will compose the API for the service.
+
+// TODO: Structure your own protobuf messages. Each protocol buffer message is a 
+// small logical record of information, containing a series of name-value pairs.
+message VersionResponse {
+  string version = 1;
+}
+
+// TODO: Define the UsersService service and its methods. Feel free
+// to change the name of UsersService to better-suit your naming
+// conventions.
+service UsersService {
+  rpc GetVersion (google.protobuf.Empty) returns (VersionResponse) {
+    // TODO: Provide mappings between REST endpoints and service methods.
+    option (google.api.http) = {
+      get: "/version"
+    };
+  }
+
+}
+
+
+// User
+
+message User {
+  option (gorm.opts) = {
+      ormable: true,
+      multi_account: false
+  };
+
+  // The User identifier.
+  atlas.rpc.Identifier id = 1 [(gorm.field).tag = {type: "serial"  primary_key: true}];
+
+  // The name of the User
+  string name = 2;
+
+  // The description of the User
+  string description = 3;
+}
+
+message CreateUserRequest {
+  User payload = 1;
+}
+
+message CreateUserResponse {
+  User result = 1;
+}
+
+message ReadUserRequest {
+  atlas.rpc.Identifier id = 1;
+  infoblox.api.FieldSelection fields = 2;
+}
+
+message ReadUserResponse {
+  User result = 1;
+}
+
+message UpdateUserRequest {
+  User payload = 1;
+  google.protobuf.FieldMask fields = 2;
+}
+
+message UpdateUserResponse {
+  User result = 1;
+}
+
+message DeleteUserRequest {
+  atlas.rpc.Identifier id = 1;
+}
+
+message DeleteUserResponse {}
+
+message ListUserRequest {
+  infoblox.api.Filtering filter = 1;
+  infoblox.api.Sorting order_by = 2;
+  infoblox.api.FieldSelection fields = 3;
+  infoblox.api.Pagination paging = 4;
+}
+
+message ListUsersResponse {
+  repeated User results = 1;
+  infoblox.api.PageInfo page = 2;
+}
+
+service Users {
+  option (gorm.server) = {
+      autogen: true,
+      txn_middleware: false,
+    };
+
+  // Use this method to create a User information.
+  rpc Create (CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+            post: "/users"
+            body: "payload"
+        };
+  }
+
+  // Use this method to read a User information by identifier.
+  rpc Read (ReadUserRequest) returns (ReadUserResponse) {
+    option (google.api.http) = {
+            get: "/users/{id.resource_id}"
+        };
+  }
+
+  // Use this method to update a User information.
+  rpc Update (UpdateUserRequest) returns (UpdateUserResponse) {
+    option (atlas_validate.method).allow_unknown_fields = false;
+    option (google.api.http) = {
+            put: "/users/{payload.id.resource_id}"
+            body: "payload"
+            additional_bindings: {
+                patch: "/users/{payload.id.resource_id}"
+                body: "payload"
+            }
+    };
+  }
+
+  // Use this method to delete a particular User.
+  rpc Delete (DeleteUserRequest) returns (DeleteUserResponse) {
+    option (google.api.http) = {
+            delete: "/users/{id.resource_id}"
+        };
+    option (gorm.method).object_type = "User";
+  }
+
+  // Use this method to retrieve all the Users.
+  rpc List (ListUserRequest) returns (ListUsersResponse) {
+    option (google.api.http) = {
+            get: "/users"
+        };
+  }
+}
+
+
+// Item
+
+message Item {
+  option (gorm.opts) = {
+      ormable: true,
+      multi_account: false
+  };
+
+  // The Item identifier.
+  atlas.rpc.Identifier id = 1 [(gorm.field).tag = {type: "serial"  primary_key: true}];
+
+  // The name of the Item
+  string name = 2;
+
+  // The description of the Item
+  string description = 3;
+}
+
+message CreateItemRequest {
+  Item payload = 1;
+}
+
+message CreateItemResponse {
+  Item result = 1;
+}
+
+message ReadItemRequest {
+  atlas.rpc.Identifier id = 1;
+  infoblox.api.FieldSelection fields = 2;
+}
+
+message ReadItemResponse {
+  Item result = 1;
+}
+
+message UpdateItemRequest {
+  Item payload = 1;
+  google.protobuf.FieldMask fields = 2;
+}
+
+message UpdateItemResponse {
+  Item result = 1;
+}
+
+message DeleteItemRequest {
+  atlas.rpc.Identifier id = 1;
+}
+
+message DeleteItemResponse {}
+
+message ListItemRequest {
+  infoblox.api.Filtering filter = 1;
+  infoblox.api.Sorting order_by = 2;
+  infoblox.api.FieldSelection fields = 3;
+  infoblox.api.Pagination paging = 4;
+}
+
+message ListItemsResponse {
+  repeated Item results = 1;
+  infoblox.api.PageInfo page = 2;
+}
+
+service Items {
+  option (gorm.server) = {
+      autogen: true,
+      txn_middleware: false,
+    };
+
+  // Use this method to create a Item information.
+  rpc Create (CreateItemRequest) returns (CreateItemResponse) {
+    option (google.api.http) = {
+            post: "/items"
+            body: "payload"
+        };
+  }
+
+  // Use this method to read a Item information by identifier.
+  rpc Read (ReadItemRequest) returns (ReadItemResponse) {
+    option (google.api.http) = {
+            get: "/items/{id.resource_id}"
+        };
+  }
+
+  // Use this method to update a Item information.
+  rpc Update (UpdateItemRequest) returns (UpdateItemResponse) {
+    option (atlas_validate.method).allow_unknown_fields = false;
+    option (google.api.http) = {
+            put: "/items/{payload.id.resource_id}"
+            body: "payload"
+            additional_bindings: {
+                patch: "/items/{payload.id.resource_id}"
+                body: "payload"
+            }
+    };
+  }
+
+  // Use this method to delete a particular Item.
+  rpc Delete (DeleteItemRequest) returns (DeleteItemResponse) {
+    option (google.api.http) = {
+            delete: "/items/{id.resource_id}"
+        };
+    option (gorm.method).object_type = "Item";
+  }
+
+  // Use this method to retrieve all the Items.
+  rpc List (ListItemRequest) returns (ListItemsResponse) {
+    option (google.api.http) = {
+            get: "/items"
+        };
+  }
+}
+
