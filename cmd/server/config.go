@@ -13,7 +13,7 @@ const (
 	defaultGatewayEnable      = true
 	defaultGatewayAddress     = "0.0.0.0"
 	defaultGatewayPort        = "8080"
-	defaultGatewayURL         = "/users-service/v1/"
+	defaultGatewayURL         = "/v1/"
 	defaultGatewaySwaggerFile = "pkg/pb/service.swagger.json"
 
 	// Database
@@ -21,11 +21,11 @@ const (
 	// DSN example: "postgres://postgres:postgres@postgres:5432/atlas_db?sslmode=disable"
 	defaultDatabaseDSN      = ""
 	defaultDatabaseType     = "postgres"
-	defaultDatabaseAddress  = "0.0.0.0"
+	defaultDatabaseAddress  = "ec2-54-247-94-127.eu-west-1.compute.amazonaws.com"
 	defaultDatabasePort     = "5432"
-	defaultDatabaseName     = "users_service"
-	defaultDatabaseUser     = "postgres"
-	defaultDatabasePassword = "postgres"
+	defaultDatabaseName     = "d5nd99u2372p7i"
+	defaultDatabaseUser     = "ferfejzttdnois"
+	defaultDatabasePassword = "3b465615b3448ae437120fcc39c05a07eb243c23f557628f60b010cc88554c2e"
 	defaultDatabaseSSL      = "disable"
 	defaultDatabaseOption   = ""
 
