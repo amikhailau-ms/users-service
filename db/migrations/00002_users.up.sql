@@ -1,11 +1,14 @@
 
 CREATE TABLE users (
-  id serial primary key,
-  account_id varchar(255),
+  id varchar(30) primary key,
+  email varchar(255) NOT NULL,
+  password varchar(40) NOT NULL,
   created_at timestamptz DEFAULT current_timestamp,
   updated_at timestamptz DEFAULT NULL,
   name varchar(255) DEFAULT NULL,
-  description varchar(255) DEFAULT NULL
+  coins int DEFAULT 0,
+  gems int DEFAULT 0,
+  is_admin boolean DEFAULT FALSE
 );
 
 CREATE TRIGGER users_updated_at
