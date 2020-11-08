@@ -25,17 +25,11 @@ func CreateServer(logger *logrus.Logger, db *gorm.DB, interceptors []grpc.UnaryS
 
 	// register all of our services into the grpcServer
 
-	user, err := svc.NewUsersServer(db)
+	user, err := svc.NewUsersServer(&svc.UsersServerConfig{Database: db})
 	if err != nil {
 		return nil, err
 	}
 	pb.RegisterUsersServer(grpcServer, user)
-
-	item, err := svc.NewItemsServer(db)
-	if err != nil {
-		return nil, err
-	}
-	pb.RegisterItemsServer(grpcServer, item)
 
 	return grpcServer, nil
 }

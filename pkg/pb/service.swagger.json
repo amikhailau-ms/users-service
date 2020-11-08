@@ -15,13 +15,12 @@
     "version": "version not set"
   },
   "paths": {
-    "/items": {
+    "/news": {
       "get": {
         "tags": [
-          "Items"
+          "NewsService"
         ],
-        "summary": "Use this method to retrieve all the Items.",
-        "operationId": "ItemsList",
+        "operationId": "NewsServiceList",
         "parameters": [
           {
             "type": "string",
@@ -64,24 +63,23 @@
           "200": {
             "description": "GET operation response",
             "schema": {
-              "$ref": "#/definitions/serviceListItemsResponse"
+              "$ref": "#/definitions/serviceListNewsResponse"
             }
           }
         }
       },
       "post": {
         "tags": [
-          "Items"
+          "NewsService"
         ],
-        "summary": "Use this method to create a Item information.",
-        "operationId": "ItemsCreate",
+        "operationId": "NewsServiceCreate",
         "parameters": [
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/serviceItem"
+              "$ref": "#/definitions/serviceCreateNewsRequest"
             }
           }
         ],
@@ -89,31 +87,137 @@
           "201": {
             "description": "POST operation response",
             "schema": {
-              "$ref": "#/definitions/serviceCreateItemResponse"
+              "$ref": "#/definitions/serviceCreateNewsResponse"
             }
           }
         }
       }
     },
-    "/items/{id}": {
+    "/news/{title}": {
       "get": {
         "tags": [
-          "Items"
+          "NewsService"
         ],
-        "summary": "Use this method to read a Item information by identifier.",
-        "operationId": "ItemsRead",
+        "operationId": "NewsServiceRead",
         "parameters": [
           {
             "type": "string",
-            "description": "An application specific resource identity of a resource",
-            "name": "id",
+            "name": "title",
             "in": "path",
             "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GET operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceReadNewsResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "NewsService"
+        ],
+        "operationId": "NewsServiceUpdate",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "title",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceUpdateNewsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "PUT operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceUpdateNewsResponse"
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "NewsService"
+        ],
+        "operationId": "NewsServiceUpdate2",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "title",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceUpdateNewsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "PATCH operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceUpdateNewsResponse"
+            }
+          }
+        }
+      }
+    },
+    "/stats": {
+      "get": {
+        "tags": [
+          "UsersStats"
+        ],
+        "operationId": "UsersStatsListStats",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "\n\nA collection of response resources can be filtered by a logical expression string that includes JSON tag references to values in each resource, literal values, and logical operators. If a resource does not have the specified tag, its value is assumed to be null.\n\nLiteral values include numbers (integer and floating-point), and quoted (both single- or double-quoted) literal strings, and 'null'. The following operators are commonly used in filter expressions:\n\n|  Op   |  Description               | \n|  --   |  -----------               | \n|  ==   |  Equal                     | \n|  !=   |  Not Equal                 | \n|  \u003e    |  Greater Than              | \n|   \u003e=  |  Greater Than or Equal To  | \n|  \u003c    |  Less Than                 | \n|  \u003c=   |  Less Than or Equal To     | \n|  and  |  Logical AND               | \n|  ~    |  Matches Regex             | \n|  !~   |  Does Not Match Regex      | \n|  or   |  Logical OR                | \n|  not  |  Logical NOT               | \n|  ()   |  Groupping Operators       |\n\n\t\t\t\t\t\t",
+            "name": "_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "\n\nA collection of response resources can be sorted by their JSON tags. For a 'flat' resource, the tag name is straightforward. If sorting is allowed on non-flat hierarchical resources, the service should implement a qualified naming scheme such as dot-qualification to reference data down the hierarchy. If a resource does not have the specified tag, its value is assumed to be null.)\n\nSpecify this parameter as a comma-separated list of JSON tag names. The sort direction can be specified by a suffix separated by whitespace before the tag name. The suffix 'asc' sorts the data in ascending order. The suffix 'desc' sorts the data in descending order. If no suffix is specified the data is sorted in ascending order.\n\n\t\t\t\t\t\t",
+            "name": "_order_by",
+            "in": "query"
           },
           {
             "type": "string",
             "description": "\n\nA collection of response resources can be transformed by specifying a set of JSON tags to be returned. For a “flat” resource, the tag name is straightforward. If field selection is allowed on non-flat hierarchical resources, the service should implement a qualified naming scheme such as dot-qualification to reference data down the hierarchy. If a resource does not have the specified tag, the tag does not appear in the output resource.\n\nSpecify this parameter as a comma-separated list of JSON tag names.\n\n\t\t\t\t\t\t",
             "name": "_fields",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "\n\nThe integer index (zero-origin) of the offset into a collection of resources. If omitted or null the value is assumed to be '0'.\n\n\t\t\t\t\t\t\t",
+            "name": "_offset",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "\n\nThe integer number of resources to be returned in the response. The service may impose maximum value. If omitted the service may impose a default value.\n\n\t\t\t\t\t\t\t",
+            "name": "_limit",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "\n\nThe service-defined string used to identify a page of resources. A null value indicates the first page.\n\n\t\t\t\t\t\t\t",
+            "name": "_page_token",
             "in": "query"
           }
         ],
@@ -121,21 +225,205 @@
           "200": {
             "description": "GET operation response",
             "schema": {
-              "$ref": "#/definitions/serviceReadItemResponse"
+              "$ref": "#/definitions/serviceListUserStatsResponse"
+            }
+          }
+        }
+      }
+    },
+    "/stats/{username}": {
+      "get": {
+        "tags": [
+          "UsersStats"
+        ],
+        "operationId": "UsersStatsGetStats",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "username",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GET operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceReadUserStatsResponse"
             }
           }
         }
       },
       "put": {
         "tags": [
-          "Items"
+          "UsersStats"
         ],
-        "summary": "Use this method to update a Item information.",
-        "operationId": "ItemsUpdate",
+        "operationId": "UsersStatsUpdateStats",
         "parameters": [
           {
             "type": "string",
-            "description": "An application specific resource identity of a resource",
+            "name": "username",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceUpdateUserStatsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "PUT operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceUpdateUserStatsResponse"
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "UsersStats"
+        ],
+        "operationId": "UsersStatsUpdateStats2",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "username",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceUpdateUserStatsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "PATCH operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceUpdateUserStatsResponse"
+            }
+          }
+        }
+      }
+    },
+    "/store_items": {
+      "get": {
+        "tags": [
+          "StoreItems"
+        ],
+        "operationId": "StoreItemsList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "\n\nA collection of response resources can be filtered by a logical expression string that includes JSON tag references to values in each resource, literal values, and logical operators. If a resource does not have the specified tag, its value is assumed to be null.\n\nLiteral values include numbers (integer and floating-point), and quoted (both single- or double-quoted) literal strings, and 'null'. The following operators are commonly used in filter expressions:\n\n|  Op   |  Description               | \n|  --   |  -----------               | \n|  ==   |  Equal                     | \n|  !=   |  Not Equal                 | \n|  \u003e    |  Greater Than              | \n|   \u003e=  |  Greater Than or Equal To  | \n|  \u003c    |  Less Than                 | \n|  \u003c=   |  Less Than or Equal To     | \n|  and  |  Logical AND               | \n|  ~    |  Matches Regex             | \n|  !~   |  Does Not Match Regex      | \n|  or   |  Logical OR                | \n|  not  |  Logical NOT               | \n|  ()   |  Groupping Operators       |\n\n\t\t\t\t\t\t",
+            "name": "_filter",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "\n\nA collection of response resources can be sorted by their JSON tags. For a 'flat' resource, the tag name is straightforward. If sorting is allowed on non-flat hierarchical resources, the service should implement a qualified naming scheme such as dot-qualification to reference data down the hierarchy. If a resource does not have the specified tag, its value is assumed to be null.)\n\nSpecify this parameter as a comma-separated list of JSON tag names. The sort direction can be specified by a suffix separated by whitespace before the tag name. The suffix 'asc' sorts the data in ascending order. The suffix 'desc' sorts the data in descending order. If no suffix is specified the data is sorted in ascending order.\n\n\t\t\t\t\t\t",
+            "name": "_order_by",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "\n\nA collection of response resources can be transformed by specifying a set of JSON tags to be returned. For a “flat” resource, the tag name is straightforward. If field selection is allowed on non-flat hierarchical resources, the service should implement a qualified naming scheme such as dot-qualification to reference data down the hierarchy. If a resource does not have the specified tag, the tag does not appear in the output resource.\n\nSpecify this parameter as a comma-separated list of JSON tag names.\n\n\t\t\t\t\t\t",
+            "name": "_fields",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "\n\nThe integer index (zero-origin) of the offset into a collection of resources. If omitted or null the value is assumed to be '0'.\n\n\t\t\t\t\t\t\t",
+            "name": "_offset",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "\n\nThe integer number of resources to be returned in the response. The service may impose maximum value. If omitted the service may impose a default value.\n\n\t\t\t\t\t\t\t",
+            "name": "_limit",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "\n\nThe service-defined string used to identify a page of resources. A null value indicates the first page.\n\n\t\t\t\t\t\t\t",
+            "name": "_page_token",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GET operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceListStoreItemsResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "StoreItems"
+        ],
+        "operationId": "StoreItemsCreate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceCreateStoreItemRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "POST operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceCreateStoreItemResponse"
+            }
+          }
+        }
+      }
+    },
+    "/store_items/{id}": {
+      "get": {
+        "tags": [
+          "StoreItems"
+        ],
+        "operationId": "StoreItemsRead",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GET operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceReadStoreItemResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "StoreItems"
+        ],
+        "operationId": "StoreItemsUpdate",
+        "parameters": [
+          {
+            "type": "string",
             "name": "id",
             "in": "path",
             "required": true
@@ -145,7 +433,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/serviceItem"
+              "$ref": "#/definitions/serviceStoreItem"
             }
           }
         ],
@@ -153,21 +441,19 @@
           "201": {
             "description": "PUT operation response",
             "schema": {
-              "$ref": "#/definitions/serviceUpdateItemResponse"
+              "$ref": "#/definitions/serviceUpdateStoreItemResponse"
             }
           }
         }
       },
       "delete": {
         "tags": [
-          "Items"
+          "StoreItems"
         ],
-        "summary": "Use this method to delete a particular Item.",
-        "operationId": "ItemsDelete",
+        "operationId": "StoreItemsDelete",
         "parameters": [
           {
             "type": "string",
-            "description": "An application specific resource identity of a resource",
             "name": "id",
             "in": "path",
             "required": true
@@ -181,14 +467,12 @@
       },
       "patch": {
         "tags": [
-          "Items"
+          "StoreItems"
         ],
-        "summary": "Use this method to update a Item information.",
-        "operationId": "ItemsUpdate2",
+        "operationId": "StoreItemsUpdate2",
         "parameters": [
           {
             "type": "string",
-            "description": "An application specific resource identity of a resource",
             "name": "id",
             "in": "path",
             "required": true
@@ -198,7 +482,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/serviceItem"
+              "$ref": "#/definitions/serviceStoreItem"
             }
           }
         ],
@@ -206,7 +490,7 @@
           "201": {
             "description": "PATCH operation response",
             "schema": {
-              "$ref": "#/definitions/serviceUpdateItemResponse"
+              "$ref": "#/definitions/serviceUpdateStoreItemResponse"
             }
           }
         }
@@ -217,46 +501,7 @@
         "tags": [
           "Users"
         ],
-        "summary": "Use this method to retrieve all the Users.",
         "operationId": "UsersList",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "\n\nA collection of response resources can be filtered by a logical expression string that includes JSON tag references to values in each resource, literal values, and logical operators. If a resource does not have the specified tag, its value is assumed to be null.\n\nLiteral values include numbers (integer and floating-point), and quoted (both single- or double-quoted) literal strings, and 'null'. The following operators are commonly used in filter expressions:\n\n|  Op   |  Description               | \n|  --   |  -----------               | \n|  ==   |  Equal                     | \n|  !=   |  Not Equal                 | \n|  \u003e    |  Greater Than              | \n|   \u003e=  |  Greater Than or Equal To  | \n|  \u003c    |  Less Than                 | \n|  \u003c=   |  Less Than or Equal To     | \n|  and  |  Logical AND               | \n|  ~    |  Matches Regex             | \n|  !~   |  Does Not Match Regex      | \n|  or   |  Logical OR                | \n|  not  |  Logical NOT               | \n|  ()   |  Groupping Operators       |\n\n\t\t\t\t\t\t",
-            "name": "_filter",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "\n\nA collection of response resources can be sorted by their JSON tags. For a 'flat' resource, the tag name is straightforward. If sorting is allowed on non-flat hierarchical resources, the service should implement a qualified naming scheme such as dot-qualification to reference data down the hierarchy. If a resource does not have the specified tag, its value is assumed to be null.)\n\nSpecify this parameter as a comma-separated list of JSON tag names. The sort direction can be specified by a suffix separated by whitespace before the tag name. The suffix 'asc' sorts the data in ascending order. The suffix 'desc' sorts the data in descending order. If no suffix is specified the data is sorted in ascending order.\n\n\t\t\t\t\t\t",
-            "name": "_order_by",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "\n\nA collection of response resources can be transformed by specifying a set of JSON tags to be returned. For a “flat” resource, the tag name is straightforward. If field selection is allowed on non-flat hierarchical resources, the service should implement a qualified naming scheme such as dot-qualification to reference data down the hierarchy. If a resource does not have the specified tag, the tag does not appear in the output resource.\n\nSpecify this parameter as a comma-separated list of JSON tag names.\n\n\t\t\t\t\t\t",
-            "name": "_fields",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "description": "\n\nThe integer index (zero-origin) of the offset into a collection of resources. If omitted or null the value is assumed to be '0'.\n\n\t\t\t\t\t\t\t",
-            "name": "_offset",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "description": "\n\nThe integer number of resources to be returned in the response. The service may impose maximum value. If omitted the service may impose a default value.\n\n\t\t\t\t\t\t\t",
-            "name": "_limit",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "\n\nThe service-defined string used to identify a page of resources. A null value indicates the first page.\n\n\t\t\t\t\t\t\t",
-            "name": "_page_token",
-            "in": "query"
-          }
-        ],
         "responses": {
           "200": {
             "description": "GET operation response",
@@ -270,7 +515,6 @@
         "tags": [
           "Users"
         ],
-        "summary": "Use this method to create a User information.",
         "operationId": "UsersCreate",
         "parameters": [
           {
@@ -278,7 +522,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/serviceUser"
+              "$ref": "#/definitions/serviceCreateUserRequest"
             }
           }
         ],
@@ -297,21 +541,13 @@
         "tags": [
           "Users"
         ],
-        "summary": "Use this method to read a User information by identifier.",
         "operationId": "UsersRead",
         "parameters": [
           {
             "type": "string",
-            "description": "An application specific resource identity of a resource",
             "name": "id",
             "in": "path",
             "required": true
-          },
-          {
-            "type": "string",
-            "description": "\n\nA collection of response resources can be transformed by specifying a set of JSON tags to be returned. For a “flat” resource, the tag name is straightforward. If field selection is allowed on non-flat hierarchical resources, the service should implement a qualified naming scheme such as dot-qualification to reference data down the hierarchy. If a resource does not have the specified tag, the tag does not appear in the output resource.\n\nSpecify this parameter as a comma-separated list of JSON tag names.\n\n\t\t\t\t\t\t",
-            "name": "_fields",
-            "in": "query"
           }
         ],
         "responses": {
@@ -327,12 +563,10 @@
         "tags": [
           "Users"
         ],
-        "summary": "Use this method to update a User information.",
         "operationId": "UsersUpdate",
         "parameters": [
           {
             "type": "string",
-            "description": "An application specific resource identity of a resource",
             "name": "id",
             "in": "path",
             "required": true
@@ -342,7 +576,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/serviceUser"
+              "$ref": "#/definitions/serviceUpdateUserRequest"
             }
           }
         ],
@@ -359,12 +593,10 @@
         "tags": [
           "Users"
         ],
-        "summary": "Use this method to delete a particular User.",
         "operationId": "UsersDelete",
         "parameters": [
           {
             "type": "string",
-            "description": "An application specific resource identity of a resource",
             "name": "id",
             "in": "path",
             "required": true
@@ -380,12 +612,10 @@
         "tags": [
           "Users"
         ],
-        "summary": "Use this method to update a User information.",
         "operationId": "UsersUpdate2",
         "parameters": [
           {
             "type": "string",
-            "description": "An application specific resource identity of a resource",
             "name": "id",
             "in": "path",
             "required": true
@@ -395,7 +625,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/serviceUser"
+              "$ref": "#/definitions/serviceUpdateUserRequest"
             }
           }
         ],
@@ -447,11 +677,75 @@
         }
       }
     },
-    "serviceCreateItemResponse": {
+    "serviceCreateNewsRequest": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string",
+          "format": "byte"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "serviceCreateNewsResponse": {
       "type": "object",
       "properties": {
         "result": {
-          "$ref": "#/definitions/serviceItem"
+          "$ref": "#/definitions/serviceNews"
+        }
+      }
+    },
+    "serviceCreateStoreItemRequest": {
+      "type": "object",
+      "properties": {
+        "coins_price": {
+          "type": "string",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        },
+        "gems_price": {
+          "type": "string",
+          "format": "int64"
+        },
+        "image": {
+          "type": "string",
+          "format": "byte"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "serviceCreateStoreItemResponse": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/definitions/serviceStoreItem"
+        }
+      }
+    },
+    "serviceCreateUserRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
         }
       }
     },
@@ -463,25 +757,7 @@
         }
       }
     },
-    "serviceItem": {
-      "type": "object",
-      "properties": {
-        "description": {
-          "type": "string",
-          "title": "The description of the Item"
-        },
-        "id": {
-          "description": "The resource identifier.",
-          "type": "string",
-          "readOnly": true
-        },
-        "name": {
-          "type": "string",
-          "title": "The name of the Item"
-        }
-      }
-    },
-    "serviceListItemsResponse": {
+    "serviceListNewsResponse": {
       "type": "object",
       "properties": {
         "page": {
@@ -490,7 +766,35 @@
         "results": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/serviceItem"
+            "$ref": "#/definitions/serviceNews"
+          }
+        }
+      }
+    },
+    "serviceListStoreItemsResponse": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "$ref": "#/definitions/apiPageInfo"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/serviceStoreItem"
+          }
+        }
+      }
+    },
+    "serviceListUserStatsResponse": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "$ref": "#/definitions/apiPageInfo"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/serviceUserStats"
           }
         }
       }
@@ -498,9 +802,6 @@
     "serviceListUsersResponse": {
       "type": "object",
       "properties": {
-        "page": {
-          "$ref": "#/definitions/apiPageInfo"
-        },
         "results": {
           "type": "array",
           "items": {
@@ -509,11 +810,42 @@
         }
       }
     },
-    "serviceReadItemResponse": {
+    "serviceNews": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "image": {
+          "type": "string",
+          "format": "byte"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "serviceReadNewsResponse": {
       "type": "object",
       "properties": {
         "result": {
-          "$ref": "#/definitions/serviceItem"
+          "$ref": "#/definitions/serviceNews"
+        }
+      }
+    },
+    "serviceReadStoreItemResponse": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/definitions/serviceStoreItem"
         }
       }
     },
@@ -525,37 +857,182 @@
         }
       }
     },
-    "serviceUpdateItemResponse": {
+    "serviceReadUserStatsResponse": {
       "type": "object",
       "properties": {
         "result": {
-          "$ref": "#/definitions/serviceItem"
+          "$ref": "#/definitions/serviceUserStats"
+        }
+      }
+    },
+    "serviceStoreItem": {
+      "type": "object",
+      "properties": {
+        "coins_price": {
+          "type": "string",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        },
+        "gems_price": {
+          "type": "string",
+          "format": "int64"
+        },
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "image": {
+          "type": "string",
+          "format": "byte"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "serviceUpdateNewsRequest": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string",
+          "format": "byte"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "serviceUpdateNewsResponse": {
+      "type": "object"
+    },
+    "serviceUpdateStoreItemResponse": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/definitions/serviceStoreItem"
+        }
+      }
+    },
+    "serviceUpdateUserRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
         }
       }
     },
     "serviceUpdateUserResponse": {
+      "type": "object"
+    },
+    "serviceUpdateUserStatsRequest": {
+      "type": "object",
+      "properties": {
+        "add_games": {
+          "type": "string",
+          "format": "int64"
+        },
+        "add_kills": {
+          "type": "string",
+          "format": "int64"
+        },
+        "add_top5": {
+          "type": "string",
+          "format": "int64"
+        },
+        "add_wins": {
+          "type": "string",
+          "format": "int64"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "serviceUpdateUserStatsResponse": {
       "type": "object",
       "properties": {
         "result": {
-          "$ref": "#/definitions/serviceUser"
+          "$ref": "#/definitions/serviceUserStats"
         }
       }
     },
     "serviceUser": {
       "type": "object",
       "properties": {
-        "description": {
+        "coins": {
           "type": "string",
-          "title": "The description of the User"
+          "format": "int64"
+        },
+        "email": {
+          "type": "string"
+        },
+        "gems": {
+          "type": "string",
+          "format": "int64"
         },
         "id": {
-          "description": "The resource identifier.",
           "type": "string",
           "readOnly": true
         },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/serviceStoreItem"
+          }
+        },
         "name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "stats": {
+          "$ref": "#/definitions/serviceUserStats"
+        }
+      }
+    },
+    "serviceUserStats": {
+      "type": "object",
+      "properties": {
+        "games": {
           "type": "string",
-          "title": "The name of the User"
+          "format": "int64"
+        },
+        "id": {
+          "type": "string",
+          "format": "int64",
+          "readOnly": true
+        },
+        "kills": {
+          "type": "string",
+          "format": "int64"
+        },
+        "top5": {
+          "type": "string",
+          "format": "int64"
+        },
+        "username": {
+          "type": "string"
+        },
+        "wins": {
+          "type": "string",
+          "format": "int64"
         }
       }
     },
