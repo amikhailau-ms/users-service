@@ -9,6 +9,5 @@ import (
 func RegisterGatewayEndpoints() gateway.Option {
 	return gateway.WithEndpointRegistration(viper.GetString("server.version"),
 		pb.RegisterUsersHandlerFromEndpoint,
-		pb.RegisterItemsHandlerFromEndpoint,
 	)
 }

@@ -9,9 +9,9 @@ import "protoc-gen-swagger/options/annotations.proto";
 import "github.com/infobloxopen/protoc-gen-gorm/options/gorm.proto";
 
 import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
 //import "github.com/infobloxopen/protoc-gen-gorm/types/types.proto";
 import "github.com/infobloxopen/atlas-app-toolkit/query/collection_operators.proto";
-import "github.com/infobloxopen/atlas-app-toolkit/rpc/resource/resource.proto";
 import "github.com/infobloxopen/protoc-gen-atlas-query-validate/options/query_validate.proto";
 import "github.com/infobloxopen/protoc-gen-atlas-validate/options/atlas_validate.proto";
 
@@ -50,11 +50,8 @@ service UsersService {
       get: "/version"
     };
   }
-
 }
 
-
-// User
 
 message User {
   option (gorm.opts) = {
@@ -62,18 +59,20 @@ message User {
       multi_account: false
   };
 
-  // The User identifier.
-  atlas.rpc.Identifier id = 1 [(gorm.field).tag = {type: "serial"  primary_key: true}];
-
-  // The name of the User
+  string id = 1 [(gorm.field).tag = {type: "UUID"  primary_key: true}];
   string name = 2;
-
-  // The description of the User
-  string description = 3;
+  string email = 3;
+  string password = 4;
+  int64 coins = 5;
+  int64 gems = 6;
+  repeated StoreItem items = 7 [(gorm.field).belongs_to.preload = true];
+  UserStats stats = 8 [(gorm.field).belongs_to.preload = true];
 }
 
 message CreateUserRequest {
-  User payload = 1;
+  string name = 1;
+  string email = 2;
+  string password = 3;
 }
 
 message CreateUserResponse {
@@ -81,8 +80,7 @@ message CreateUserResponse {
 }
 
 message ReadUserRequest {
-  atlas.rpc.Identifier id = 1;
-  infoblox.api.FieldSelection fields = 2;
+  string id = 1;
 }
 
 message ReadUserResponse {
@@ -90,30 +88,23 @@ message ReadUserResponse {
 }
 
 message UpdateUserRequest {
-  User payload = 1;
-  google.protobuf.FieldMask fields = 2;
+  string id = 1;
+  string name = 2;
+  string password = 3;
 }
 
-message UpdateUserResponse {
-  User result = 1;
-}
+message UpdateUserResponse {}
 
 message DeleteUserRequest {
-  atlas.rpc.Identifier id = 1;
+  string id = 1;
 }
 
 message DeleteUserResponse {}
 
-message ListUserRequest {
-  infoblox.api.Filtering filter = 1;
-  infoblox.api.Sorting order_by = 2;
-  infoblox.api.FieldSelection fields = 3;
-  infoblox.api.Pagination paging = 4;
-}
+message ListUserRequest {}
 
 message ListUsersResponse {
   repeated User results = 1;
-  infoblox.api.PageInfo page = 2;
 }
 
 service Users {
@@ -122,43 +113,38 @@ service Users {
       txn_middleware: false,
     };
 
-  // Use this method to create a User information.
   rpc Create (CreateUserRequest) returns (CreateUserResponse) {
     option (google.api.http) = {
             post: "/users"
-            body: "payload"
+            body: "*"
         };
   }
 
-  // Use this method to read a User information by identifier.
   rpc Read (ReadUserRequest) returns (ReadUserResponse) {
     option (google.api.http) = {
-            get: "/users/{id.resource_id}"
+            get: "/users/{id}"
         };
   }
 
-  // Use this method to update a User information.
   rpc Update (UpdateUserRequest) returns (UpdateUserResponse) {
     option (atlas_validate.method).allow_unknown_fields = false;
     option (google.api.http) = {
-            put: "/users/{payload.id.resource_id}"
-            body: "payload"
+            put: "/users/{id}"
+            body: "*"
             additional_bindings: {
-                patch: "/users/{payload.id.resource_id}"
-                body: "payload"
+                patch: "/users/{id}"
+                body: "*"
             }
     };
   }
 
-  // Use this method to delete a particular User.
   rpc Delete (DeleteUserRequest) returns (DeleteUserResponse) {
     option (google.api.http) = {
-            delete: "/users/{id.resource_id}"
+            delete: "/users/{id}"
         };
     option (gorm.method).object_type = "User";
   }
 
-  // Use this method to retrieve all the Users.
   rpc List (ListUserRequest) returns (ListUsersResponse) {
     option (google.api.http) = {
             get: "/users"
@@ -167,115 +153,276 @@ service Users {
 }
 
 
-// Item
-
-message Item {
+message StoreItem {
   option (gorm.opts) = {
       ormable: true,
       multi_account: false
   };
 
-  // The Item identifier.
-  atlas.rpc.Identifier id = 1 [(gorm.field).tag = {type: "serial"  primary_key: true}];
-
-  // The name of the Item
+  string id = 1 [(gorm.field).tag = {type: "UUID"  primary_key: true}];
   string name = 2;
-
-  // The description of the Item
   string description = 3;
+  int64 type = 4;
+  int64 coins_price = 5;
+  int64 gems_price = 6;
+  bytes image = 7;
 }
 
-message CreateItemRequest {
-  Item payload = 1;
+message CreateStoreItemRequest {
+  string name = 1;
+  string description = 2;
+  int64 type = 3;
+  int64 coins_price = 4;
+  int64 gems_price = 5;
+  bytes image = 6;
 }
 
-message CreateItemResponse {
-  Item result = 1;
+message CreateStoreItemResponse {
+  StoreItem result = 1;
 }
 
-message ReadItemRequest {
-  atlas.rpc.Identifier id = 1;
-  infoblox.api.FieldSelection fields = 2;
+message ReadStoreItemRequest {
+  string id = 1;
 }
 
-message ReadItemResponse {
-  Item result = 1;
+message ReadStoreItemResponse {
+  StoreItem result = 1;
 }
 
-message UpdateItemRequest {
-  Item payload = 1;
+message UpdateStoreItemRequest {
+  StoreItem payload = 1;
   google.protobuf.FieldMask fields = 2;
 }
 
-message UpdateItemResponse {
-  Item result = 1;
+message UpdateStoreItemResponse {
+  StoreItem result = 1;
 }
 
-message DeleteItemRequest {
-  atlas.rpc.Identifier id = 1;
+message DeleteStoreItemRequest {
+  string id = 1;
 }
 
-message DeleteItemResponse {}
+message DeleteStoreItemResponse {}
 
-message ListItemRequest {
+message ListStoreItemsRequest {
   infoblox.api.Filtering filter = 1;
   infoblox.api.Sorting order_by = 2;
   infoblox.api.FieldSelection fields = 3;
   infoblox.api.Pagination paging = 4;
 }
 
-message ListItemsResponse {
-  repeated Item results = 1;
+message ListStoreItemsResponse {
+  repeated StoreItem results = 1;
   infoblox.api.PageInfo page = 2;
 }
 
-service Items {
+service StoreItems {
   option (gorm.server) = {
       autogen: true,
       txn_middleware: false,
     };
 
-  // Use this method to create a Item information.
-  rpc Create (CreateItemRequest) returns (CreateItemResponse) {
+  rpc Create (CreateStoreItemRequest) returns (CreateStoreItemResponse) {
     option (google.api.http) = {
-            post: "/items"
-            body: "payload"
+            post: "/store_items"
+            body: "*"
         };
   }
 
-  // Use this method to read a Item information by identifier.
-  rpc Read (ReadItemRequest) returns (ReadItemResponse) {
+  rpc Read (ReadStoreItemRequest) returns (ReadStoreItemResponse) {
     option (google.api.http) = {
-            get: "/items/{id.resource_id}"
+            get: "/store_items/{id}"
         };
   }
 
-  // Use this method to update a Item information.
-  rpc Update (UpdateItemRequest) returns (UpdateItemResponse) {
+  rpc Update (UpdateStoreItemRequest) returns (UpdateStoreItemResponse) {
     option (atlas_validate.method).allow_unknown_fields = false;
     option (google.api.http) = {
-            put: "/items/{payload.id.resource_id}"
+            put: "/store_items/{payload.id}"
             body: "payload"
             additional_bindings: {
-                patch: "/items/{payload.id.resource_id}"
+                patch: "/store_items/{payload.id}"
                 body: "payload"
             }
     };
   }
 
-  // Use this method to delete a particular Item.
-  rpc Delete (DeleteItemRequest) returns (DeleteItemResponse) {
+  rpc Delete (DeleteStoreItemRequest) returns (DeleteStoreItemResponse) {
     option (google.api.http) = {
-            delete: "/items/{id.resource_id}"
+            delete: "/store_items/{id}"
         };
-    option (gorm.method).object_type = "Item";
+    option (gorm.method).object_type = "StoreItem";
   }
 
-  // Use this method to retrieve all the Items.
-  rpc List (ListItemRequest) returns (ListItemsResponse) {
+  rpc List (ListStoreItemsRequest) returns (ListStoreItemsResponse) {
     option (google.api.http) = {
-            get: "/items"
+            get: "/store_items"
         };
   }
 }
 
+message UserStats {
+  option (gorm.opts) = {
+      ormable: true,
+      multi_account: false
+  };
+
+  int64 id = 1 [(gorm.field).tag = {type: "serial"  primary_key: true}];
+  int64 games = 2;
+  int64 wins = 3;
+  int64 top5 = 4;
+  int64 kills = 5;
+  string username = 6;
+}
+
+message ReadUserStatsRequest {
+  string username = 1;
+}
+
+message ReadUserStatsResponse {
+  UserStats result = 1;
+}
+
+message UpdateUserStatsRequest {
+  string username = 1;
+  int64 add_games = 2;
+  int64 add_wins = 3;
+  int64 add_top5 = 4;
+  int64 add_kills = 5;
+}
+
+message UpdateUserStatsResponse {
+  UserStats result = 1;
+}
+
+message ListUserStatsRequest {
+  infoblox.api.Filtering filter = 1;
+  infoblox.api.Sorting order_by = 2;
+  infoblox.api.FieldSelection fields = 3;
+  infoblox.api.Pagination paging = 4;
+}
+
+message ListUserStatsResponse {
+  repeated UserStats results = 1;
+  infoblox.api.PageInfo page = 2;
+}
+
+service UsersStats {
+  option (gorm.server) = {
+      autogen: true,
+      txn_middleware: false,
+    };
+
+  rpc GetStats (ReadUserStatsRequest) returns (ReadUserStatsResponse) {
+    option (google.api.http) = {
+            get: "/stats/{username}"
+        };
+  }
+
+  rpc UpdateStats (UpdateUserStatsRequest) returns (UpdateUserStatsResponse) {
+    option (atlas_validate.method).allow_unknown_fields = false;
+    option (google.api.http) = {
+            put: "/stats/{username}"
+            body: "*"
+            additional_bindings: {
+                patch: "/stats/{username}"
+                body: "*"
+            }
+    };
+  }
+
+  rpc ListStats (ListUserStatsRequest) returns (ListUserStatsResponse) {
+    option (google.api.http) = {
+            get: "/stats"
+        };
+  }
+}
+
+message News {
+  option (gorm.opts) = {
+      ormable: true,
+      multi_account: false
+  };
+
+  string id = 1 [(gorm.field).tag = {type: "UUID"  primary_key: true}];
+  google.protobuf.Timestamp date = 2;
+  string title = 3;
+  string description = 4;
+  bytes image = 5;
+}
+
+message CreateNewsRequest {
+  string title = 1;
+  string description = 2;
+  bytes image = 3;
+}
+
+message CreateNewsResponse {
+  News result = 1;
+}
+
+message ReadNewsRequest {
+  string title = 1;
+}
+
+message ReadNewsResponse {
+  News result = 1;
+}
+
+message UpdateNewsRequest {
+  string title = 1;
+  string description = 2;
+  bytes image = 3;
+}
+
+message UpdateNewsResponse {}
+
+message ListNewsRequest {
+  infoblox.api.Filtering filter = 1;
+  infoblox.api.Sorting order_by = 2;
+  infoblox.api.FieldSelection fields = 3;
+  infoblox.api.Pagination paging = 4;
+}
+
+message ListNewsResponse {
+  repeated News results = 1;
+  infoblox.api.PageInfo page = 2;
+}
+
+service NewsService {
+  option (gorm.server) = {
+      autogen: true,
+      txn_middleware: false,
+    };
+
+  rpc Create (CreateNewsRequest) returns (CreateNewsResponse) {
+    option (google.api.http) = {
+            post: "/news"
+            body: "*"
+        };
+  }
+
+  rpc Read (ReadNewsRequest) returns (ReadNewsResponse) {
+    option (google.api.http) = {
+            get: "/news/{title}"
+        };
+  }
+
+  rpc Update (UpdateNewsRequest) returns (UpdateNewsResponse) {
+    option (atlas_validate.method).allow_unknown_fields = false;
+    option (google.api.http) = {
+            put: "/news/{title}"
+            body: "*"
+            additional_bindings: {
+                patch: "/news/{title}"
+                body: "*"
+            }
+    };
+  }
+
+  rpc List (ListNewsRequest) returns (ListNewsResponse) {
+    option (google.api.http) = {
+            get: "/news"
+        };
+  }
+}
