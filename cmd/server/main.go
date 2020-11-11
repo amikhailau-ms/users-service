@@ -6,9 +6,11 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 
+	"github.com/amikhailau/users-service/db"
 	"github.com/amikhailau/users-service/pkg/pb"
 	"github.com/golang/protobuf/proto"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -26,6 +28,36 @@ import (
 func main() {
 	doneC := make(chan error)
 	logger := NewLogger()
+
+	connURL := &url.URL{
+		Scheme:   "postgres",
+		User:     url.UserPassword(*flagDatabaseUser, *flagDatabasePassword),
+		Host:     fmt.Sprintf("%s:%s", *flagDatabaseAddress, *flagDatabasePort),
+		Path:     "/" + *flagDatabaseName,
+		RawQuery: fmt.Sprintf("sslmode=%s", *flagDatabaseSSL),
+	}
+
+	fileURL := &url.URL{
+		Scheme: "file",
+		Path:   *flagDatabaseMigration,
+	}
+
+	logger.WithFields(logrus.Fields{
+		"db":     connURL.Hostname(),
+		"schema": fileURL.String(),
+	}).Warn("migrating db")
+	if err := db.Migrate(connURL, fileURL); err != nil {
+		if !strings.HasSuffix(err.Error(), "no change") {
+			logger.WithFields(logrus.Fields{
+				"db":     connURL.String(),
+				"schema": fileURL.String(),
+			}).WithError(err).Fatal("failed to migrate db")
+		}
+	}
+	logger.WithFields(logrus.Fields{
+		"db":     connURL.Hostname(),
+		"schema": fileURL.String(),
+	}).Warn("migrated db")
 
 	go func() { doneC <- ServeExternal(logger) }()
 
