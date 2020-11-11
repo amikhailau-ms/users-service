@@ -101,10 +101,16 @@ message DeleteUserRequest {
 
 message DeleteUserResponse {}
 
-message ListUserRequest {}
+message ListUsersRequest {
+  infoblox.api.Filtering filter = 1;
+  infoblox.api.Sorting order_by = 2;
+  infoblox.api.FieldSelection fields = 3;
+  infoblox.api.Pagination paging = 4;
+}
 
 message ListUsersResponse {
   repeated User results = 1;
+  infoblox.api.PageInfo page = 2;
 }
 
 service Users {
@@ -145,7 +151,7 @@ service Users {
     option (gorm.method).object_type = "User";
   }
 
-  rpc List (ListUserRequest) returns (ListUsersResponse) {
+  rpc List (ListUsersRequest) returns (ListUsersResponse) {
     option (google.api.http) = {
             get: "/users"
         };
@@ -272,7 +278,6 @@ message UserStats {
   int64 wins = 3;
   int64 top5 = 4;
   int64 kills = 5;
-  string username = 6;
 }
 
 message ReadUserStatsRequest {
@@ -293,18 +298,6 @@ message UpdateUserStatsRequest {
 
 message UpdateUserStatsResponse {
   UserStats result = 1;
-}
-
-message ListUserStatsRequest {
-  infoblox.api.Filtering filter = 1;
-  infoblox.api.Sorting order_by = 2;
-  infoblox.api.FieldSelection fields = 3;
-  infoblox.api.Pagination paging = 4;
-}
-
-message ListUserStatsResponse {
-  repeated UserStats results = 1;
-  infoblox.api.PageInfo page = 2;
 }
 
 service UsersStats {
@@ -329,12 +322,6 @@ service UsersStats {
                 body: "*"
             }
     };
-  }
-
-  rpc ListStats (ListUserStatsRequest) returns (ListUserStatsResponse) {
-    option (google.api.http) = {
-            get: "/stats"
-        };
   }
 }
 

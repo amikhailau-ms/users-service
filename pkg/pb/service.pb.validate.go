@@ -772,20 +772,60 @@ var _ interface {
 	ErrorName() string
 } = DeleteUserResponseValidationError{}
 
-// Validate checks the field values on ListUserRequest with the rules defined
+// Validate checks the field values on ListUsersRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, an
 // error is returned.
-func (m *ListUserRequest) Validate() error {
+func (m *ListUsersRequest) Validate() error {
 	if m == nil {
 		return nil
+	}
+
+	if v, ok := interface{}(m.GetFilter()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListUsersRequestValidationError{
+				field:  "Filter",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetOrderBy()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListUsersRequestValidationError{
+				field:  "OrderBy",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetFields()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListUsersRequestValidationError{
+				field:  "Fields",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetPaging()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListUsersRequestValidationError{
+				field:  "Paging",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
 	return nil
 }
 
-// ListUserRequestValidationError is the validation error returned by
-// ListUserRequest.Validate if the designated constraints aren't met.
-type ListUserRequestValidationError struct {
+// ListUsersRequestValidationError is the validation error returned by
+// ListUsersRequest.Validate if the designated constraints aren't met.
+type ListUsersRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -793,22 +833,22 @@ type ListUserRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e ListUserRequestValidationError) Field() string { return e.field }
+func (e ListUsersRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ListUserRequestValidationError) Reason() string { return e.reason }
+func (e ListUsersRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ListUserRequestValidationError) Cause() error { return e.cause }
+func (e ListUsersRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ListUserRequestValidationError) Key() bool { return e.key }
+func (e ListUsersRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ListUserRequestValidationError) ErrorName() string { return "ListUserRequestValidationError" }
+func (e ListUsersRequestValidationError) ErrorName() string { return "ListUsersRequestValidationError" }
 
 // Error satisfies the builtin error interface
-func (e ListUserRequestValidationError) Error() string {
+func (e ListUsersRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -820,14 +860,14 @@ func (e ListUserRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sListUserRequest.%s: %s%s",
+		"invalid %sListUsersRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ListUserRequestValidationError{}
+var _ error = ListUsersRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -835,7 +875,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ListUserRequestValidationError{}
+} = ListUsersRequestValidationError{}
 
 // Validate checks the field values on ListUsersResponse with the rules defined
 // in the proto definition for this message. If any rules are violated, an
@@ -858,6 +898,16 @@ func (m *ListUsersResponse) Validate() error {
 			}
 		}
 
+	}
+
+	if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListUsersResponseValidationError{
+				field:  "Page",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
 	return nil
@@ -1815,8 +1865,6 @@ func (m *UserStats) Validate() error {
 
 	// no validation rules for Kills
 
-	// no validation rules for Username
-
 	return nil
 }
 
@@ -2173,205 +2221,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdateUserStatsResponseValidationError{}
-
-// Validate checks the field values on ListUserStatsRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
-func (m *ListUserStatsRequest) Validate() error {
-	if m == nil {
-		return nil
-	}
-
-	if v, ok := interface{}(m.GetFilter()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ListUserStatsRequestValidationError{
-				field:  "Filter",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if v, ok := interface{}(m.GetOrderBy()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ListUserStatsRequestValidationError{
-				field:  "OrderBy",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if v, ok := interface{}(m.GetFields()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ListUserStatsRequestValidationError{
-				field:  "Fields",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if v, ok := interface{}(m.GetPaging()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ListUserStatsRequestValidationError{
-				field:  "Paging",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	return nil
-}
-
-// ListUserStatsRequestValidationError is the validation error returned by
-// ListUserStatsRequest.Validate if the designated constraints aren't met.
-type ListUserStatsRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e ListUserStatsRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e ListUserStatsRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e ListUserStatsRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e ListUserStatsRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e ListUserStatsRequestValidationError) ErrorName() string {
-	return "ListUserStatsRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e ListUserStatsRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sListUserStatsRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = ListUserStatsRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = ListUserStatsRequestValidationError{}
-
-// Validate checks the field values on ListUserStatsResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, an error is returned.
-func (m *ListUserStatsResponse) Validate() error {
-	if m == nil {
-		return nil
-	}
-
-	for idx, item := range m.GetResults() {
-		_, _ = idx, item
-
-		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return ListUserStatsResponseValidationError{
-					field:  fmt.Sprintf("Results[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ListUserStatsResponseValidationError{
-				field:  "Page",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	return nil
-}
-
-// ListUserStatsResponseValidationError is the validation error returned by
-// ListUserStatsResponse.Validate if the designated constraints aren't met.
-type ListUserStatsResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e ListUserStatsResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e ListUserStatsResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e ListUserStatsResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e ListUserStatsResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e ListUserStatsResponseValidationError) ErrorName() string {
-	return "ListUserStatsResponseValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e ListUserStatsResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sListUserStatsResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = ListUserStatsResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = ListUserStatsResponseValidationError{}
 
 // Validate checks the field values on News with the rules defined in the proto
 // definition for this message. If any rules are violated, an error is returned.

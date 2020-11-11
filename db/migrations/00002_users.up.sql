@@ -8,7 +8,8 @@ CREATE TABLE users (
   name varchar(255) DEFAULT NULL,
   coins int DEFAULT 0,
   gems int DEFAULT 0,
-  is_admin boolean DEFAULT FALSE
+  is_admin boolean DEFAULT FALSE,
+  UNIQUE(name)
 );
 
 CREATE TRIGGER users_updated_at

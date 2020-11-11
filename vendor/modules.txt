@@ -90,6 +90,9 @@ github.com/magiconair/properties
 github.com/mitchellh/mapstructure
 # github.com/pelletier/go-toml v1.2.0
 github.com/pelletier/go-toml
+# github.com/satori/go.uuid v1.2.0
+## explicit
+github.com/satori/go.uuid
 # github.com/sirupsen/logrus v1.7.0
 ## explicit
 github.com/sirupsen/logrus
