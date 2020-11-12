@@ -9,7 +9,8 @@ CREATE TABLE users (
   coins int DEFAULT 0,
   gems int DEFAULT 0,
   is_admin boolean DEFAULT FALSE,
-  UNIQUE(name)
+  UNIQUE(name),
+  UNIQUE(email)
 );
 
 CREATE TRIGGER users_updated_at

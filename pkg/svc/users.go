@@ -40,10 +40,10 @@ func (s *UsersServer) Create(ctx context.Context, req *pb.CreateUserRequest) (*p
 	})
 	logger.Debug("User registration started")
 
-	txnDB := s.cfg.Database.Begin()
+	db := s.cfg.Database
 
 	var existingUser pb.UserORM
-	if err := txnDB.Where("name = ?", req.GetName()).First(&existingUser).Error; err == nil {
+	if err := db.Where("name = ?", req.GetName()).First(&existingUser).Error; err == nil {
 		logger.Error("User with such name already exists")
 		return nil, status.Error(codes.InvalidArgument, "User with such name already exists")
 	} else if err != gorm.ErrRecordNotFound {
@@ -51,7 +51,7 @@ func (s *UsersServer) Create(ctx context.Context, req *pb.CreateUserRequest) (*p
 		return nil, status.Error(codes.Internal, "Could not create new user")
 	}
 
-	if err := txnDB.Where("email = ?", req.GetEmail()).First(&existingUser).Error; err == nil {
+	if err := db.Where("email = ?", req.GetEmail()).First(&existingUser).Error; err == nil {
 		logger.Error("User with such email already exists")
 		return nil, status.Error(codes.InvalidArgument, "User with such email already exists")
 	} else if err != gorm.ErrRecordNotFound {
@@ -75,20 +75,17 @@ func (s *UsersServer) Create(ctx context.Context, req *pb.CreateUserRequest) (*p
 		Gems:     0,
 	}
 
-	if err := txnDB.Create(&newUser).Error; err != nil {
-		txnDB.Rollback()
+	if err := db.Create(&newUser).Error; err != nil {
 		logger.WithError(err).Error("Could not create new user")
 		return nil, status.Error(codes.Internal, "Could not create new user")
 	}
 
 	pbUser, err := newUser.ToPB(ctx)
 	if err != nil {
-		txnDB.Rollback()
 		logger.WithError(err).Error("Could not create new user")
 		return nil, status.Error(codes.Internal, "Could not create new user")
 	}
 
-	txnDB.Commit()
 	logger.Debug("User registration finished")
 
 	return &pb.CreateUserResponse{Result: &pbUser}, nil
