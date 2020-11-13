@@ -61,7 +61,11 @@ test-atlas: fmt-atlas
 	@go test $(GO_TEST_FLAGS) $(GO_PACKAGES)
 
 docker-atlas:
+ifeq ($(IMAGE_VERSION), latest)
 	@docker build -f $(SERVER_DOCKERFILE) -t $(SERVER_IMAGE):$(IMAGE_VERSION) -t registry.heroku.com/$(HEROKU_APP)/web .
+else
+	@docker build -f $(SERVER_DOCKERFILE) -t $(SERVER_IMAGE):$(IMAGE_VERSION) .
+endif
 	@docker image prune -f --filter label=stage=server-intermediate
 
 .docker-$(IMAGE_NAME)-$(IMAGE_VERSION):
