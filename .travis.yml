@@ -7,6 +7,11 @@ language: go
 services:
     - docker
     
+branches:
+    only:
+        - master
+        - develop
+
 before_script:
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - curl https://cli-assets.heroku.com/install.sh | sudo sh
@@ -15,10 +20,14 @@ before_script:
     - make test 
 
 script:
-    - make push IMAGE_VERSION=latest
+    - 'if [ "$TRAVIS_BRANCH" = "master" AND "$TRAVIS_PULL_REQUEST" = "false" ]; then make push IMAGE_VERSION=latest; fi'
+    - 'if [ "$TRAVIS_BRANCH" = "develop" AND "$TRAVIS_PULL_REQUEST" = "false"]; then make push IMAGE_VERSION=develop; fi'
+    - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then make push; fi'
 
 deploy:   
     provider: script
     script: 
         docker push registry.heroku.com/$HEROKU_APP/web;
         heroku container:release web --app $HEROKU_APP
+    on:
+        branch: master
