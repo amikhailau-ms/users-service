@@ -202,7 +202,7 @@ type StoreItemORM struct {
 	Description string
 	GemsPrice   int64
 	Id          string `gorm:"type:UUID;primary_key"`
-	Image       []byte
+	ImageId     string
 	Name        string
 	Type        int64
 	UserId      *string
@@ -229,7 +229,7 @@ func (m *StoreItem) ToORM(ctx context.Context) (StoreItemORM, error) {
 	to.Type = m.Type
 	to.CoinsPrice = m.CoinsPrice
 	to.GemsPrice = m.GemsPrice
-	to.Image = m.Image
+	to.ImageId = m.ImageId
 	if posthook, ok := interface{}(m).(StoreItemWithAfterToORM); ok {
 		err = posthook.AfterToORM(ctx, &to)
 	}
@@ -252,7 +252,7 @@ func (m *StoreItemORM) ToPB(ctx context.Context) (StoreItem, error) {
 	to.Type = m.Type
 	to.CoinsPrice = m.CoinsPrice
 	to.GemsPrice = m.GemsPrice
-	to.Image = m.Image
+	to.ImageId = m.ImageId
 	if posthook, ok := interface{}(m).(StoreItemWithAfterToPB); ok {
 		err = posthook.AfterToPB(ctx, &to)
 	}
@@ -365,7 +365,7 @@ type NewsORM struct {
 	Date        *time.Time
 	Description string
 	Id          string `gorm:"type:UUID;primary_key"`
-	Image       []byte
+	ImageLink   string
 	Title       string
 }
 
@@ -394,7 +394,7 @@ func (m *News) ToORM(ctx context.Context) (NewsORM, error) {
 	}
 	to.Title = m.Title
 	to.Description = m.Description
-	to.Image = m.Image
+	to.ImageLink = m.ImageLink
 	if posthook, ok := interface{}(m).(NewsWithAfterToORM); ok {
 		err = posthook.AfterToORM(ctx, &to)
 	}
@@ -419,7 +419,7 @@ func (m *NewsORM) ToPB(ctx context.Context) (News, error) {
 	}
 	to.Title = m.Title
 	to.Description = m.Description
-	to.Image = m.Image
+	to.ImageLink = m.ImageLink
 	if posthook, ok := interface{}(m).(NewsWithAfterToPB); ok {
 		err = posthook.AfterToPB(ctx, &to)
 	}
@@ -1163,8 +1163,8 @@ func DefaultApplyFieldMaskStoreItem(ctx context.Context, patchee *StoreItem, pat
 			patchee.GemsPrice = patcher.GemsPrice
 			continue
 		}
-		if f == prefix+"Image" {
-			patchee.Image = patcher.Image
+		if f == prefix+"ImageId" {
+			patchee.ImageId = patcher.ImageId
 			continue
 		}
 	}
@@ -1885,8 +1885,8 @@ func DefaultApplyFieldMaskNews(ctx context.Context, patchee *News, patcher *News
 			patchee.Description = patcher.Description
 			continue
 		}
-		if f == prefix+"Image" {
-			patchee.Image = patcher.Image
+		if f == prefix+"ImageLink" {
+			patchee.ImageLink = patcher.ImageLink
 			continue
 		}
 	}
@@ -2269,8 +2269,35 @@ func (m *NewsServiceDefaultServer) Create(ctx context.Context, in *CreateNewsReq
 
 // Read ...
 func (m *NewsServiceDefaultServer) Read(ctx context.Context, in *ReadNewsRequest) (*ReadNewsResponse, error) {
-	out := &ReadNewsResponse{}
+	db := m.DB
+	if custom, ok := interface{}(in).(NewsServiceNewsWithBeforeRead); ok {
+		var err error
+		if db, err = custom.BeforeRead(ctx, db); err != nil {
+			return nil, err
+		}
+	}
+	res, err := DefaultReadNews(ctx, &News{Id: in.GetId()}, db)
+	if err != nil {
+		return nil, err
+	}
+	out := &ReadNewsResponse{Result: res}
+	if custom, ok := interface{}(in).(NewsServiceNewsWithAfterRead); ok {
+		var err error
+		if err = custom.AfterRead(ctx, out, db); err != nil {
+			return nil, err
+		}
+	}
 	return out, nil
+}
+
+// NewsServiceNewsWithBeforeRead called before DefaultReadNews in the default Read handler
+type NewsServiceNewsWithBeforeRead interface {
+	BeforeRead(context.Context, *gorm1.DB) (*gorm1.DB, error)
+}
+
+// NewsServiceNewsWithAfterRead called before DefaultReadNews in the default Read handler
+type NewsServiceNewsWithAfterRead interface {
+	AfterRead(context.Context, *ReadNewsResponse, *gorm1.DB) error
 }
 
 // Update ...

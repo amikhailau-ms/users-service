@@ -1,7 +1,8 @@
+BEGIN;
 
 CREATE TABLE users_stats (
   id serial primary key,
-  user_id varchar(30),
+  user_id varchar,
   games int DEFAULT 0,
   wins int DEFAULT 0,
   top5 int DEFAULT 0,
@@ -16,3 +17,4 @@ CREATE TRIGGER users_stats_updated_at
   FOR EACH ROW
   EXECUTE PROCEDURE set_updated_at();
 
+COMMIT;

@@ -988,7 +988,7 @@ func (m *StoreItem) Validate() error {
 
 	// no validation rules for GemsPrice
 
-	// no validation rules for Image
+	// no validation rules for ImageId
 
 	return nil
 }
@@ -1065,7 +1065,7 @@ func (m *CreateStoreItemRequest) Validate() error {
 
 	// no validation rules for GemsPrice
 
-	// no validation rules for Image
+	// no validation rules for ImageId
 
 	return nil
 }
@@ -2245,7 +2245,7 @@ func (m *News) Validate() error {
 
 	// no validation rules for Description
 
-	// no validation rules for Image
+	// no validation rules for ImageLink
 
 	return nil
 }
@@ -2316,7 +2316,7 @@ func (m *CreateNewsRequest) Validate() error {
 
 	// no validation rules for Description
 
-	// no validation rules for Image
+	// no validation rules for ImageLink
 
 	return nil
 }
@@ -2462,7 +2462,7 @@ func (m *ReadNewsRequest) Validate() error {
 		return nil
 	}
 
-	// no validation rules for Title
+	// no validation rules for Id
 
 	return nil
 }
@@ -2604,11 +2604,13 @@ func (m *UpdateNewsRequest) Validate() error {
 		return nil
 	}
 
+	// no validation rules for Id
+
 	// no validation rules for Title
 
 	// no validation rules for Description
 
-	// no validation rules for Image
+	// no validation rules for ImageLink
 
 	return nil
 }
