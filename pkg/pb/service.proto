@@ -171,7 +171,7 @@ message StoreItem {
   int64 type = 4;
   int64 coins_price = 5;
   int64 gems_price = 6;
-  bytes image = 7;
+  string image_id = 7;
 }
 
 message CreateStoreItemRequest {
@@ -180,7 +180,7 @@ message CreateStoreItemRequest {
   int64 type = 3;
   int64 coins_price = 4;
   int64 gems_price = 5;
-  bytes image = 6;
+  string image_id = 6;
 }
 
 message CreateStoreItemResponse {
@@ -335,13 +335,13 @@ message News {
   google.protobuf.Timestamp date = 2;
   string title = 3;
   string description = 4;
-  bytes image = 5;
+  string image_link = 5;
 }
 
 message CreateNewsRequest {
   string title = 1;
   string description = 2;
-  bytes image = 3;
+  string image_link = 3;
 }
 
 message CreateNewsResponse {
@@ -349,7 +349,7 @@ message CreateNewsResponse {
 }
 
 message ReadNewsRequest {
-  string title = 1;
+  string id = 1;
 }
 
 message ReadNewsResponse {
@@ -357,9 +357,10 @@ message ReadNewsResponse {
 }
 
 message UpdateNewsRequest {
-  string title = 1;
-  string description = 2;
-  bytes image = 3;
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string image_link = 4;
 }
 
 message UpdateNewsResponse {}
@@ -391,17 +392,17 @@ service NewsService {
 
   rpc Read (ReadNewsRequest) returns (ReadNewsResponse) {
     option (google.api.http) = {
-            get: "/news/{title}"
+            get: "/news/{id}"
         };
   }
 
   rpc Update (UpdateNewsRequest) returns (UpdateNewsResponse) {
     option (atlas_validate.method).allow_unknown_fields = false;
     option (google.api.http) = {
-            put: "/news/{title}"
+            put: "/news/{id}"
             body: "*"
             additional_bindings: {
-                patch: "/news/{title}"
+                patch: "/news/{id}"
                 body: "*"
             }
     };

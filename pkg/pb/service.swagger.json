@@ -93,7 +93,7 @@
         }
       }
     },
-    "/news/{title}": {
+    "/news/{id}": {
       "get": {
         "tags": [
           "NewsService"
@@ -102,7 +102,7 @@
         "parameters": [
           {
             "type": "string",
-            "name": "title",
+            "name": "id",
             "in": "path",
             "required": true
           }
@@ -124,7 +124,7 @@
         "parameters": [
           {
             "type": "string",
-            "name": "title",
+            "name": "id",
             "in": "path",
             "required": true
           },
@@ -154,7 +154,7 @@
         "parameters": [
           {
             "type": "string",
-            "name": "title",
+            "name": "id",
             "in": "path",
             "required": true
           },
@@ -667,9 +667,8 @@
         "description": {
           "type": "string"
         },
-        "image": {
-          "type": "string",
-          "format": "byte"
+        "image_link": {
+          "type": "string"
         },
         "title": {
           "type": "string"
@@ -698,9 +697,8 @@
           "type": "string",
           "format": "int64"
         },
-        "image": {
-          "type": "string",
-          "format": "byte"
+        "image_id": {
+          "type": "string"
         },
         "name": {
           "type": "string"
@@ -797,9 +795,8 @@
           "type": "string",
           "readOnly": true
         },
-        "image": {
-          "type": "string",
-          "format": "byte"
+        "image_link": {
+          "type": "string"
         },
         "title": {
           "type": "string"
@@ -856,9 +853,8 @@
           "type": "string",
           "readOnly": true
         },
-        "image": {
-          "type": "string",
-          "format": "byte"
+        "image_id": {
+          "type": "string"
         },
         "name": {
           "type": "string"
@@ -875,9 +871,12 @@
         "description": {
           "type": "string"
         },
-        "image": {
+        "id": {
           "type": "string",
-          "format": "byte"
+          "readOnly": true
+        },
+        "image_link": {
+          "type": "string"
         },
         "title": {
           "type": "string"

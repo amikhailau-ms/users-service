@@ -1,16 +1,17 @@
+BEGIN;
 
 CREATE TABLE store_items (
-  id varchar(30) primary key,
-  user_id varchar(30),
+  id varchar primary key,
   created_at timestamptz DEFAULT current_timestamp,
   updated_at timestamptz DEFAULT NULL,
-  name varchar(255) DEFAULT NULL,
+  name varchar DEFAULT NULL,
   type int NOT NULL,
-  image bytea NOT NULL,
-  description varchar(400) DEFAULT NULL
+  image_id varchar NOT NULL,
+  description text DEFAULT NULL
   coins_price int NOT NULL,
   gems_price int NOT NULL,
-  CONSTRAINT store_items_user_id FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+  UNIQUE(name),
+  UNIQUE(image_id)
 );
 
 CREATE TRIGGER store_items_updated_at
@@ -18,3 +19,4 @@ CREATE TRIGGER store_items_updated_at
   FOR EACH ROW
   EXECUTE PROCEDURE set_updated_at();
 
+COMMIT;
