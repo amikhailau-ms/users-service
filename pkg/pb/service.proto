@@ -65,7 +65,7 @@ message User {
   string password = 4;
   int64 coins = 5;
   int64 gems = 6;
-  repeated StoreItem items = 7 [(gorm.field).belongs_to.preload = true];
+  repeated StoreItem items = 7 [(gorm.field).many_to_many = {jointable: "users_store_items" preload: false}];
   UserStats stats = 8;
 }
 
@@ -222,6 +222,21 @@ message ListStoreItemsResponse {
   infoblox.api.PageInfo page = 2;
 }
 
+message BuyByUserRequest {
+  string user_id = 1;
+  string item_id = 2;
+}
+
+message BuyByUserResponse {}
+
+message GetUserItemsIdsRequest {
+  string user_id = 1;
+}
+
+message GetUserItemsIdsResponse {
+  repeated string item_ids = 1;
+}
+
 service StoreItems {
   option (gorm.server) = {
       autogen: true,
@@ -263,6 +278,19 @@ service StoreItems {
   rpc List (ListStoreItemsRequest) returns (ListStoreItemsResponse) {
     option (google.api.http) = {
             get: "/store_items"
+        };
+  }
+
+  rpc BuyByUser (BuyByUserRequest) returns (BuyByUserResponse) {
+    option (google.api.http) = {
+            post: "/store_items/buy"
+            body: "*"
+        };
+  }
+
+  rpc GetUserItemsIds (GetUserItemsIdsRequest) returns (GetUserItemsIdsResponse) {
+    option (google.api.http) = {
+            get: "/store_items/user/{user_id}"
         };
   }
 }
