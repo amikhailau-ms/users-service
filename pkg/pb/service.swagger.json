@@ -339,6 +339,56 @@
         }
       }
     },
+    "/store_items/buy": {
+      "post": {
+        "tags": [
+          "StoreItems"
+        ],
+        "operationId": "StoreItemsBuyByUser",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceBuyByUserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "POST operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceBuyByUserResponse"
+            }
+          }
+        }
+      }
+    },
+    "/store_items/user/{user_id}": {
+      "get": {
+        "tags": [
+          "StoreItems"
+        ],
+        "operationId": "StoreItemsGetUserItemsIds",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GET operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceGetUserItemsIdsResponse"
+            }
+          }
+        }
+      }
+    },
     "/store_items/{id}": {
       "get": {
         "tags": [
@@ -661,6 +711,20 @@
         }
       }
     },
+    "serviceBuyByUserRequest": {
+      "type": "object",
+      "properties": {
+        "item_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "serviceBuyByUserResponse": {
+      "type": "object"
+    },
     "serviceCreateNewsRequest": {
       "type": "object",
       "properties": {
@@ -736,6 +800,17 @@
       "properties": {
         "result": {
           "$ref": "#/definitions/serviceUser"
+        }
+      }
+    },
+    "serviceGetUserItemsIdsResponse": {
+      "type": "object",
+      "properties": {
+        "item_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

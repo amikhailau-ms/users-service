@@ -1848,6 +1848,278 @@ var _ interface {
 	ErrorName() string
 } = ListStoreItemsResponseValidationError{}
 
+// Validate checks the field values on BuyByUserRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, an
+// error is returned.
+func (m *BuyByUserRequest) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for UserId
+
+	// no validation rules for ItemId
+
+	return nil
+}
+
+// BuyByUserRequestValidationError is the validation error returned by
+// BuyByUserRequest.Validate if the designated constraints aren't met.
+type BuyByUserRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e BuyByUserRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e BuyByUserRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e BuyByUserRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e BuyByUserRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e BuyByUserRequestValidationError) ErrorName() string { return "BuyByUserRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e BuyByUserRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sBuyByUserRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = BuyByUserRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = BuyByUserRequestValidationError{}
+
+// Validate checks the field values on BuyByUserResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, an
+// error is returned.
+func (m *BuyByUserResponse) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// BuyByUserResponseValidationError is the validation error returned by
+// BuyByUserResponse.Validate if the designated constraints aren't met.
+type BuyByUserResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e BuyByUserResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e BuyByUserResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e BuyByUserResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e BuyByUserResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e BuyByUserResponseValidationError) ErrorName() string {
+	return "BuyByUserResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e BuyByUserResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sBuyByUserResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = BuyByUserResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = BuyByUserResponseValidationError{}
+
+// Validate checks the field values on GetUserItemsIdsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *GetUserItemsIdsRequest) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for UserId
+
+	return nil
+}
+
+// GetUserItemsIdsRequestValidationError is the validation error returned by
+// GetUserItemsIdsRequest.Validate if the designated constraints aren't met.
+type GetUserItemsIdsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetUserItemsIdsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetUserItemsIdsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetUserItemsIdsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetUserItemsIdsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetUserItemsIdsRequestValidationError) ErrorName() string {
+	return "GetUserItemsIdsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetUserItemsIdsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetUserItemsIdsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetUserItemsIdsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetUserItemsIdsRequestValidationError{}
+
+// Validate checks the field values on GetUserItemsIdsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *GetUserItemsIdsResponse) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// GetUserItemsIdsResponseValidationError is the validation error returned by
+// GetUserItemsIdsResponse.Validate if the designated constraints aren't met.
+type GetUserItemsIdsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetUserItemsIdsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetUserItemsIdsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetUserItemsIdsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetUserItemsIdsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetUserItemsIdsResponseValidationError) ErrorName() string {
+	return "GetUserItemsIdsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetUserItemsIdsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetUserItemsIdsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetUserItemsIdsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetUserItemsIdsResponseValidationError{}
+
 // Validate checks the field values on UserStats with the rules defined in the
 // proto definition for this message. If any rules are violated, an error is returned.
 func (m *UserStats) Validate() error {
