@@ -2493,10 +2493,10 @@ func (m *News) Validate() error {
 
 	// no validation rules for Id
 
-	if v, ok := interface{}(m.GetDate()).(interface{ Validate() error }); ok {
+	if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return NewsValidationError{
-				field:  "Date",
+				field:  "CreatedAt",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
