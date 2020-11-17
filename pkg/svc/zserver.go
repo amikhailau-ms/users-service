@@ -36,7 +36,7 @@ import (
 
 const (
 	// version is the current version of the service
-	version = "0.0.1"
+	version = "0.1.0"
 )
 
 // Default implementation of the UsersService server interface
@@ -50,22 +50,4 @@ func (server) GetVersion(context.Context, *empty.Empty) (*pb.VersionResponse, er
 // NewBasicServer returns an instance of the default server interface
 func NewBasicServer(database *gorm.DB) (pb.UsersServiceServer, error) {
 	return &server{db: database}, nil
-}
-
-type usersServer struct {
-	*pb.UsersDefaultServer
-}
-
-// NewUsersServer returns an instance of the default User server interface
-func NewUsersServer(db *gorm.DB) (pb.UsersServer, error) {
-	return &usersServer{&pb.UsersDefaultServer{db}}, nil
-}
-
-type itemsServer struct {
-	*pb.ItemsDefaultServer
-}
-
-// NewItemsServer returns an instance of the default Item server interface
-func NewItemsServer(db *gorm.DB) (pb.ItemsServer, error) {
-	return &itemsServer{&pb.ItemsDefaultServer{db}}, nil
 }

@@ -1,3 +1,6 @@
+# github.com/DATA-DOG/go-sqlmock v1.5.0
+## explicit
+github.com/DATA-DOG/go-sqlmock
 # github.com/envoyproxy/protoc-gen-validate v0.4.1
 ## explicit
 github.com/envoyproxy/protoc-gen-validate/validate
@@ -6,6 +9,13 @@ github.com/fsnotify/fsnotify
 # github.com/gogo/protobuf v1.2.1
 github.com/gogo/protobuf/proto
 github.com/gogo/protobuf/protoc-gen-gogo/descriptor
+# github.com/golang-migrate/migrate v3.5.4+incompatible
+## explicit
+github.com/golang-migrate/migrate
+github.com/golang-migrate/migrate/database
+github.com/golang-migrate/migrate/database/postgres
+github.com/golang-migrate/migrate/source
+github.com/golang-migrate/migrate/source/file
 # github.com/golang/protobuf v1.4.3
 ## explicit
 github.com/golang/protobuf/descriptor
@@ -90,6 +100,9 @@ github.com/magiconair/properties
 github.com/mitchellh/mapstructure
 # github.com/pelletier/go-toml v1.2.0
 github.com/pelletier/go-toml
+# github.com/satori/go.uuid v1.2.0
+## explicit
+github.com/satori/go.uuid
 # github.com/sirupsen/logrus v1.7.0
 ## explicit
 github.com/sirupsen/logrus
@@ -213,5 +226,7 @@ google.golang.org/protobuf/types/known/wrapperspb
 google.golang.org/protobuf/types/pluginpb
 # gopkg.in/ini.v1 v1.51.0
 gopkg.in/ini.v1
+# gopkg.in/mattes/migrate.v1 v1.3.2
+## explicit
 # gopkg.in/yaml.v2 v2.2.4
 gopkg.in/yaml.v2

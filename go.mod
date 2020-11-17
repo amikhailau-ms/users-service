@@ -3,7 +3,9 @@ module github.com/amikhailau/users-service
 go 1.15
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/envoyproxy/protoc-gen-validate v0.4.1
+	github.com/golang-migrate/migrate v3.5.4+incompatible
 	github.com/golang/protobuf v1.4.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/grpc-gateway v1.15.2
@@ -12,9 +14,11 @@ require (
 	github.com/infobloxopen/protoc-gen-atlas-validate v0.4.1
 	github.com/infobloxopen/protoc-gen-gorm v0.20.0
 	github.com/jinzhu/gorm v1.9.16
+	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.7.1
 	google.golang.org/genproto v0.0.0-20201022181438-0ff5f38871d5
 	google.golang.org/grpc v1.33.1
+	gopkg.in/mattes/migrate.v1 v1.3.2 // indirect
 )
