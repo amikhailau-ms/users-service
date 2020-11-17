@@ -365,7 +365,7 @@ type UserStatsWithAfterToPB interface {
 }
 
 type NewsORM struct {
-	Date        *time.Time
+	CreatedAt   *time.Time
 	Description string
 	Id          string `gorm:"type:UUID;primary_key"`
 	ImageLink   string
@@ -388,12 +388,12 @@ func (m *News) ToORM(ctx context.Context) (NewsORM, error) {
 		}
 	}
 	to.Id = m.Id
-	if m.Date != nil {
+	if m.CreatedAt != nil {
 		var t time.Time
-		if t, err = ptypes1.Timestamp(m.Date); err != nil {
+		if t, err = ptypes1.Timestamp(m.CreatedAt); err != nil {
 			return to, err
 		}
-		to.Date = &t
+		to.CreatedAt = &t
 	}
 	to.Title = m.Title
 	to.Description = m.Description
@@ -415,8 +415,8 @@ func (m *NewsORM) ToPB(ctx context.Context) (News, error) {
 		}
 	}
 	to.Id = m.Id
-	if m.Date != nil {
-		if to.Date, err = ptypes1.TimestampProto(*m.Date); err != nil {
+	if m.CreatedAt != nil {
+		if to.CreatedAt, err = ptypes1.TimestampProto(*m.CreatedAt); err != nil {
 			return to, err
 		}
 	}
@@ -1871,8 +1871,8 @@ func DefaultApplyFieldMaskNews(ctx context.Context, patchee *News, patcher *News
 			patchee.Id = patcher.Id
 			continue
 		}
-		if f == prefix+"Date" {
-			patchee.Date = patcher.Date
+		if f == prefix+"CreatedAt" {
+			patchee.CreatedAt = patcher.CreatedAt
 			continue
 		}
 		if f == prefix+"Title" {
