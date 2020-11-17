@@ -16,5 +16,5 @@ RUN mkdir -p /lib64 && \
 
 COPY --from=builder /go/src/github.com/amikhailau/users-service/bin/server .
 COPY pkg/pb/*.swagger.json www/swagger.json
-COPY --from=builder /go/src/github.com/amikhailau/users-service/db/migrations /db/migrations/
+COPY --from=builder /go/src/github.com/amikhailau/users-service/db/migrations /bin/db/migrations/
 ENTRYPOINT ["server", "--gateway.swaggerFile", "www/swagger.json"]
