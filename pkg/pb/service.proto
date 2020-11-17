@@ -324,9 +324,7 @@ message UpdateUserStatsRequest {
   int64 add_kills = 5;
 }
 
-message UpdateUserStatsResponse {
-  UserStats result = 1;
-}
+message UpdateUserStatsResponse {}
 
 service UsersStats {
   option (gorm.server) = {
