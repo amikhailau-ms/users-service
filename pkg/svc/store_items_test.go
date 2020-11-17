@@ -48,8 +48,8 @@ func TestStoreItems(t *testing.T) {
 
 	sqlSearchID := `SELECT * FROM "store_items" WHERE ("store_items"."id" = $1) ORDER BY "store_items"."id" ASC LIMIT 1`
 	sqlSearchIDEdited := `SELECT * FROM "store_items"  WHERE (id=$1) ORDER BY "store_items"."id" ASC LIMIT 1 FOR UPDATE`
-	sqlSearchIDEdited2 := `SELECT * FROM "store_items" WHERE (id = $1) ORDER BY "store_items"."id" ASC LIMIT 1`
-	sqlSearchIDUser := `SELECT * FROM "users" WHERE (id = $1) ORDER BY "users"."id" ASC LIMIT 1`
+	//sqlSearchIDEdited2 := `SELECT * FROM "store_items" WHERE (id = $1) ORDER BY "store_items"."id" ASC LIMIT 1`
+	//sqlSearchIDUser := `SELECT * FROM "users" WHERE (id = $1) ORDER BY "users"."id" ASC LIMIT 1`
 	sqlSearchNameType := `SELECT * FROM "store_items" WHERE (name = $1 AND type = $2) ORDER BY "store_items"."id" ASC LIMIT 1`
 	sqlSearchImageID := `SELECT * FROM "store_items" WHERE (image_id = $1) ORDER BY "store_items"."id" ASC LIMIT 1`
 	sqlList := `SELECT * FROM "store_items" ORDER BY "id"`
@@ -57,8 +57,8 @@ func TestStoreItems(t *testing.T) {
 	sqlUpdateItem := `UPDATE "store_items" SET "coins_price" = $1, "description" = $2, "gems_price" = $3, "image_id" = $4, "name" = $5, "type" = $6  WHERE "store_items"."id" = $7`
 	sqlCreateItem := `INSERT INTO "store_items" ("coins_price","description","gems_price","id","image_id","name","type") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "store_items"."id"`
 	sqlDeleteItem := `DELETE FROM "store_items"  WHERE (id = $1)`
-	sqlUpdateUser := `UPDATE "users" SET "coins" = $1, "email" = $2, "gems" = $3, "name" = $4, "password" = $5  WHERE "users"."id" = $6`
-	sqlBuyItem := `INSERT INTO "users_store_items" ("user_id","store_item_id") SELECT $1,$2  WHERE NOT EXISTS (SELECT * FROM "users_store_items" WHERE "user_id" = $3 AND "store_item_id" = $4)`
+	//sqlUpdateUser := `UPDATE "users" SET "coins" = $1, "email" = $2, "gems" = $3, "name" = $4, "password" = $5  WHERE "users"."id" = $6`
+	//sqlBuyItem := `INSERT INTO "users_store_items" ("user_id","store_item_id") SELECT $1,$2  WHERE NOT EXISTS (SELECT * FROM "users_store_items" WHERE "user_id" = $3 AND "store_item_id" = $4)`
 
 	newItemData := &pb.CreateStoreItemRequest{
 		Name:        "some-name",
@@ -279,7 +279,7 @@ func TestStoreItems(t *testing.T) {
 
 	})
 
-	t.Run("BuyByUser - positive", func(t *testing.T) {
+	/*t.Run("BuyByUser - positive", func(t *testing.T) {
 		uRows := sqlmock.NewRows([]string{"id", "email", "password", "created_at", "updated_at", "name", "coins", "gems", "is_admin"}).
 			AddRow("some-id", "someemail@email.com", "some-hash", "2020-01-01 01:05:57", "2020-01-01 01:05:57", "some-name", 1000, 100, 'f')
 
@@ -304,7 +304,6 @@ func TestStoreItems(t *testing.T) {
 		if err := mock.ExpectationsWereMet(); err != nil {
 			t.Fatalf("mock shows different data: %v", err)
 		}
-
-	})
+	})*/
 
 }

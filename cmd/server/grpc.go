@@ -56,5 +56,37 @@ func NewGRPCServer(logger *logrus.Logger, dbConnectionString string) (*grpc.Serv
 	}
 	pb.RegisterUsersServiceServer(grpcServer, s)
 
+	usrS, err := svc.NewUsersServer(&svc.UsersServerConfig{
+		Database: db,
+	})
+	if err != nil {
+		return nil, err
+	}
+	pb.RegisterUsersServer(grpcServer, usrS)
+
+	stiS, err := svc.NewStoreItemsServer(&svc.StoreItemsServerConfig{
+		Database: db,
+	})
+	if err != nil {
+		return nil, err
+	}
+	pb.RegisterStoreItemsServer(grpcServer, stiS)
+
+	usrstsS, err := svc.NewUsersStatsServer(&svc.UsersStatsServerConfig{
+		Database: db,
+	})
+	if err != nil {
+		return nil, err
+	}
+	pb.RegisterUsersStatsServer(grpcServer, usrstsS)
+
+	newsS, err := svc.NewNewsServer(&svc.NewsServerConfig{
+		Database: db,
+	})
+	if err != nil {
+		return nil, err
+	}
+	pb.RegisterNewsServiceServer(grpcServer, newsS)
+
 	return grpcServer, nil
 }
