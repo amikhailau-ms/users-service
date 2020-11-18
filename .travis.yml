@@ -22,7 +22,7 @@ before_script:
 script:
     - 'if [[ "$TRAVIS_BRANCH" == "master" ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then make push IMAGE_VERSION=latest; fi'
     - 'if [[ "$TRAVIS_BRANCH" == "develop" ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then make push IMAGE_VERSION=develop; fi'
-    - 'if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then make push; fi'
+    - 'if [[ "$TRAVIS_BRANCH" != "master" ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then make push; fi'
 
 deploy:   
     provider: script
