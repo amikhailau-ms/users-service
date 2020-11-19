@@ -2,6 +2,7 @@ package svc
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/amikhailau/users-service/pkg/pb"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus/ctxlogrus"
@@ -90,17 +91,48 @@ func (s *StoreItemsServer) Update(ctx context.Context, req *pb.UpdateStoreItemRe
 	})
 	logger.Debug("Update Item")
 
+	resp, err := s.Read(ctx, &pb.ReadStoreItemRequest{Id: req.GetPayload().GetId()})
+	if err != nil {
+		return nil, err
+	}
+
 	if err := s.checkIfItemExists(logger, req.GetPayload().GetName(), req.GetPayload().GetImageId(), req.GetPayload().GetType()); err != nil {
 		return nil, err
 	}
 
-	res, err := pb.DefaultStrictUpdateStoreItem(ctx, req.GetPayload(), s.cfg.Database)
+	var gormReq *pb.UpdateStoreItemRequest
+	if req.GetFields() != nil {
+		gormReq = req
+	} else {
+		item := resp.GetResult()
+		if req.GetPayload().GetCoinsPrice() != 0 {
+			item.CoinsPrice = req.GetPayload().GetCoinsPrice()
+		}
+		if req.GetPayload().GetGemsPrice() != 0 {
+			item.GemsPrice = req.GetPayload().GetGemsPrice()
+		}
+		if req.GetPayload().GetImageId() != "" {
+			item.ImageId = req.GetPayload().GetImageId()
+		}
+		if req.GetPayload().GetName() != "" {
+			item.Name = req.GetPayload().GetName()
+		}
+		if req.GetPayload().GetDescription() != "" {
+			item.Description = req.GetPayload().GetDescription()
+		}
+		gormReq = &pb.UpdateStoreItemRequest{Payload: item}
+	}
+
+	fmt.Printf("Value: %v", gormReq.GetPayload())
+
+	defaultItemsServer := &pb.StoreItemsDefaultServer{DB: s.cfg.Database}
+	res, err := defaultItemsServer.Update(ctx, gormReq)
 	if err != nil {
 		logger.WithError(err).Error("Could not update item")
 		return nil, status.Error(codes.Internal, "Could not update item")
 	}
 
-	return &pb.UpdateStoreItemResponse{Result: res}, nil
+	return res, nil
 }
 
 func (s *StoreItemsServer) Delete(ctx context.Context, req *pb.DeleteStoreItemRequest) (*pb.DeleteStoreItemResponse, error) {
