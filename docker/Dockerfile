@@ -17,4 +17,5 @@ RUN mkdir -p /lib64 && \
 COPY --from=builder /go/src/github.com/amikhailau/users-service/bin/server .
 COPY pkg/pb/*.swagger.json www/swagger.json
 COPY --from=builder /go/src/github.com/amikhailau/users-service/db/migrations /bin/db/migrations/
-ENTRYPOINT ["server", "--gateway.swaggerFile", "www/swagger.json"]
+COPY --from=builder /go/src/github.com/amikhailau/users-service/pkg/auth auth/
+ENTRYPOINT ["server", "--gateway.swaggerFile", "www/swagger.json", "--session.key.private.path", "auth/private_unencrypted.pem", "--session.key.public.path", "auth/public.pem"]
