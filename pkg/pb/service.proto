@@ -113,6 +113,15 @@ message ListUsersResponse {
   infoblox.api.PageInfo page = 2;
 }
 
+message LoginRequest {
+  string id = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string token = 1;
+}
+
 service Users {
   option (gorm.server) = {
       autogen: true,
@@ -155,6 +164,13 @@ service Users {
     option (google.api.http) = {
             get: "/users"
         };
+  }
+
+  rpc Login (LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+        post: "/users/login"
+        body: "*"
+    };
   }
 }
 
