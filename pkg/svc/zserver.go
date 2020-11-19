@@ -36,7 +36,7 @@ import (
 
 const (
 	// version is the current version of the service
-	version = "0.1.0"
+	version = "0.1.1"
 )
 
 // Default implementation of the UsersService server interface

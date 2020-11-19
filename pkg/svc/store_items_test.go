@@ -189,6 +189,10 @@ func TestStoreItems(t *testing.T) {
 
 	t.Run("Update Item - positive", func(t *testing.T) {
 
+		rows := sqlmock.NewRows([]string{"coins_price", "description", "gems_price", "id", "image_id", "name", "type", "created_at", "updated_at"}).
+			AddRow(100, "desc", 0, "some-id", "some-im-id", "some-name", 1, "2020-01-01 01:05:57", "2020-01-01 01:05:57")
+
+		mock.ExpectQuery(regexp.QuoteMeta(sqlSearchID)).WithArgs(updateItemData.Payload.Id).WillReturnRows(rows)
 		mock.ExpectQuery(regexp.QuoteMeta(sqlSearchNameType)).WithArgs(updateItemData.Payload.Name, updateItemData.Payload.Type).WillReturnRows(sqlmock.NewRows(nil))
 		mock.ExpectQuery(regexp.QuoteMeta(sqlSearchImageID)).WithArgs(updateItemData.Payload.ImageId).WillReturnRows(sqlmock.NewRows(nil))
 		mock.ExpectQuery(regexp.QuoteMeta(sqlSearchIDEdited)).WithArgs(updateItemData.Payload.Id).WillReturnRows(sqlmock.NewRows(nil))
@@ -210,6 +214,11 @@ func TestStoreItems(t *testing.T) {
 
 	t.Run("Update Item - same name and id", func(t *testing.T) {
 
+		otherRows := sqlmock.NewRows([]string{"coins_price", "description", "gems_price", "id", "image_id", "name", "type", "created_at", "updated_at"}).
+			AddRow(100, "desc", 0, "some-id", "some-im-id", "some-name", 1, "2020-01-01 01:05:57", "2020-01-01 01:05:57")
+
+		mock.ExpectQuery(regexp.QuoteMeta(sqlSearchID)).WithArgs(updateItemData.Payload.Id).WillReturnRows(otherRows)
+
 		rows := sqlmock.NewRows([]string{"coins_price", "description", "gems_price", "id", "image_id", "name", "type", "created_at", "updated_at"}).
 			AddRow(100, "desc", 0, "some-id", "some-im-id", "some-name", 1, "2020-01-01 01:05:57", "2020-01-01 01:05:57")
 
@@ -226,6 +235,10 @@ func TestStoreItems(t *testing.T) {
 	})
 
 	t.Run("Update Item - same image id", func(t *testing.T) {
+		otherRows := sqlmock.NewRows([]string{"coins_price", "description", "gems_price", "id", "image_id", "name", "type", "created_at", "updated_at"}).
+			AddRow(100, "desc", 0, "some-id", "some-im-id", "some-name", 1, "2020-01-01 01:05:57", "2020-01-01 01:05:57")
+
+		mock.ExpectQuery(regexp.QuoteMeta(sqlSearchID)).WithArgs(updateItemData.Payload.Id).WillReturnRows(otherRows)
 
 		rows := sqlmock.NewRows([]string{"coins_price", "description", "gems_price", "id", "image_id", "name", "type", "created_at", "updated_at"}).
 			AddRow(100, "desc", 0, "some-id", "some-im-id", "some-name", 1, "2020-01-01 01:05:57", "2020-01-01 01:05:57")

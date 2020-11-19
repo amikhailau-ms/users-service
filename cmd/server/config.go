@@ -45,6 +45,10 @@ const (
 	defaultKeepaliveTime    = 10
 	defaultKeepaliveTimeout = 20
 
+	// Login
+	defaultPrivateKeyPath = "pkg/auth/private_unencrypted.pem"
+	defaultPublicKeyPath  = "pkg/auth/public.pem"
+
 	// Logging
 	defaultLoggingLevel = "debug"
 )
@@ -85,6 +89,9 @@ var (
 
 	flagKeepaliveTime    = pflag.Int("config.keepalive.time", defaultKeepaliveTime, "default value, in seconds, of the keepalive time")
 	flagKeepaliveTimeout = pflag.Int("config.keepalive.timeout", defaultKeepaliveTimeout, "default value, in seconds, of the keepalive timeout")
+
+	flagSessionPrivateKeyPath = pflag.String("session.key.private.path", defaultPrivateKeyPath, "Path to the private key used to sign JWTs")
+	flagSessionPublicKeyPath  = pflag.String("session.key.public.path", defaultPublicKeyPath, "Path to the public key used to sign JWTs")
 
 	flagLoggingLevel = pflag.String("logging.level", defaultLoggingLevel, "log level of application")
 )

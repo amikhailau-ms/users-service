@@ -570,6 +570,32 @@
         }
       }
     },
+    "/users/login": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "UsersLogin",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceLoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "POST operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceLoginResponse"
+            }
+          }
+        }
+      }
+    },
     "/users/{id}": {
       "get": {
         "tags": [
@@ -853,6 +879,26 @@
           "items": {
             "$ref": "#/definitions/serviceUser"
           }
+        }
+      }
+    },
+    "serviceLoginRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "serviceLoginResponse": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
         }
       }
     },

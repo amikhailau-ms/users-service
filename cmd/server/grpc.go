@@ -1,10 +1,12 @@
 package main
 
 import (
+	"io/ioutil"
 	"time"
 
 	"github.com/amikhailau/users-service/pkg/pb"
 	"github.com/amikhailau/users-service/pkg/svc"
+	"github.com/dgrijalva/jwt-go"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
@@ -43,6 +45,30 @@ func NewGRPCServer(logger *logrus.Logger, dbConnectionString string) (*grpc.Serv
 		),
 	)
 
+	publicKeyPath := viper.GetString("session.key.public.path")
+	pubKeyBytes, err := ioutil.ReadFile(publicKeyPath)
+	if err != nil {
+		logger.WithError(err).Fatal("Failed to read public key file")
+		return nil, err
+	}
+	sessionPublicKey, err := jwt.ParseRSAPublicKeyFromPEM(pubKeyBytes)
+	if err != nil {
+		logger.WithError(err).Fatal("Failed to parse public key")
+		return nil, err
+	}
+
+	privateKeyPath := viper.GetString("session.key.private.path")
+	privKeyBytes, err := ioutil.ReadFile(privateKeyPath)
+	if err != nil {
+		logger.WithError(err).Fatal("Failed to read private key file")
+		return nil, err
+	}
+	sessionPrivateKey, err := jwt.ParseRSAPrivateKeyFromPEM(privKeyBytes)
+	if err != nil {
+		logger.WithError(err).Fatal("Failed to parse private key")
+		return nil, err
+	}
+
 	// create new postgres database
 	db, err := gorm.Open("postgres", dbConnectionString)
 	if err != nil {
@@ -57,7 +83,9 @@ func NewGRPCServer(logger *logrus.Logger, dbConnectionString string) (*grpc.Serv
 	pb.RegisterUsersServiceServer(grpcServer, s)
 
 	usrS, err := svc.NewUsersServer(&svc.UsersServerConfig{
-		Database: db,
+		Database:      db,
+		RSAPrivateKey: sessionPrivateKey,
+		RSAPublicKey:  sessionPublicKey,
 	})
 	if err != nil {
 		return nil, err

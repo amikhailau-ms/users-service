@@ -23,6 +23,8 @@ It has these top-level messages:
 	DeleteUserResponse
 	ListUsersRequest
 	ListUsersResponse
+	LoginRequest
+	LoginResponse
 	StoreItem
 	CreateStoreItemRequest
 	CreateStoreItemResponse
@@ -2076,6 +2078,13 @@ type UsersUserWithBeforeList interface {
 type UsersUserWithAfterList interface {
 	AfterList(context.Context, *ListUsersResponse, *gorm1.DB) error
 }
+
+// Login ...
+func (m *UsersDefaultServer) Login(ctx context.Context, in *LoginRequest) (*LoginResponse, error) {
+	out := &LoginResponse{}
+	return out, nil
+}
+
 type StoreItemsDefaultServer struct {
 	DB *gorm1.DB
 }

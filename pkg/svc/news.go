@@ -116,9 +116,9 @@ func (s *NewsServer) Update(ctx context.Context, req *pb.UpdateNewsRequest) (*pb
 	}
 
 	if err := s.cfg.Database.Where("id = ?", req.GetId()).First(&existingNews).Error; err != nil {
-		if err != gorm.ErrRecordNotFound {
-			logger.Error("News with such title already exists")
-			return nil, status.Error(codes.InvalidArgument, "News with such title already exists")
+		if err == gorm.ErrRecordNotFound {
+			logger.Error("News not found")
+			return nil, status.Error(codes.NotFound, "News not found")
 		}
 		logger.WithError(err).Error("Could not update news")
 		return nil, status.Error(codes.Internal, "Could not update news")
