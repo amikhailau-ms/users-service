@@ -2,9 +2,14 @@ package svc
 
 import (
 	"context"
+	"crypto/rsa"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"time"
+
+	"github.com/amikhailau/users-service/pkg/auth"
+	"github.com/dgrijalva/jwt-go"
 
 	"github.com/amikhailau/users-service/pkg/pb"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus/ctxlogrus"
@@ -16,7 +21,9 @@ import (
 )
 
 type UsersServerConfig struct {
-	Database *gorm.DB
+	Database      *gorm.DB
+	RSAPrivateKey *rsa.PrivateKey
+	RSAPublicKey  *rsa.PublicKey
 }
 
 type UsersServer struct {
@@ -86,42 +93,22 @@ func (s *UsersServer) Create(ctx context.Context, req *pb.CreateUserRequest) (*p
 		return nil, status.Error(codes.Internal, "Could not create new user")
 	}
 
+	s.hideSensitiveInfo(&pbUser)
 	logger.Debug("User registration finished")
 
 	return &pb.CreateUserResponse{Result: &pbUser}, nil
 }
 
 func (s *UsersServer) Read(ctx context.Context, req *pb.ReadUserRequest) (*pb.ReadUserResponse, error) {
-	logger := ctxlogrus.Extract(ctx)
+	logger := ctxlogrus.Extract(ctx).WithField("provided_id", req.GetId())
 	logger.Debug("Read user")
 
-	var existingUser pb.UserORM
-	searchCriterias := []string{"id", "name", "email"}
-	userFound := false
-	for _, searchCriteria := range searchCriterias {
-		if err := s.cfg.Database.Where(fmt.Sprintf("%v = ?", searchCriteria), req.GetId()).First(&existingUser).Error; err != nil {
-			if err == gorm.ErrRecordNotFound {
-				continue
-			} else {
-				logger.WithError(err).Error("Could not find user")
-				return nil, status.Error(codes.Internal, "Could not find user")
-			}
-		}
-		userFound = true
-		break
+	usr, err := s.findUserByProvidedID(ctx, logger, req.GetId())
+	if err != nil {
+		return nil, err
 	}
-
-	if userFound {
-		pbUser, err := existingUser.ToPB(ctx)
-		if err != nil {
-			logger.WithError(err).Error("Could not find user")
-			return nil, status.Error(codes.Internal, "Could not find user")
-		}
-		return &pb.ReadUserResponse{Result: &pbUser}, nil
-	}
-
-	logger.Error("Could not find user by any criteria")
-	return nil, status.Error(codes.NotFound, "Could not find user")
+	s.hideSensitiveInfo(usr)
+	return &pb.ReadUserResponse{Result: usr}, nil
 }
 
 func (s *UsersServer) Delete(ctx context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
@@ -149,4 +136,89 @@ func (s *UsersServer) List(ctx context.Context, req *pb.ListUsersRequest) (*pb.L
 	logger.Debug("List users")
 
 	return nil, status.Error(codes.Unimplemented, "Non-MVP endpoint")
+}
+
+func (s *UsersServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
+	logger := ctxlogrus.Extract(ctx).WithField("provided_id", req.GetId())
+	logger.Debug("Login")
+
+	usr, err := s.findUserByProvidedID(ctx, logger, req.GetId())
+	if err != nil {
+		logger.WithError(err).Error("Login failed")
+		return nil, status.Error(codes.InvalidArgument, "Invalid login/password")
+	}
+
+	passwordBytes := []byte(req.GetPassword())
+	encryptedPasswordBytes := sha256.Sum256(passwordBytes)
+	tmpSlice := encryptedPasswordBytes[:]
+	hexPassword := hex.EncodeToString(tmpSlice)
+
+	if usr.Password != hexPassword {
+		logger.Error("Login failed - wrong password")
+		return nil, status.Error(codes.InvalidArgument, "Invalid login/password")
+	}
+
+	var isAdmin bool
+	if err := s.cfg.Database.Raw("SELECT is_admin FROM users WHERE id = ?", usr.GetId()).Scan(&isAdmin).Error; err != nil {
+		logger.WithError(err).Error("Failed to fetch is_admin attribute")
+		return nil, status.Error(codes.Internal, "Unable to login")
+	}
+
+	claims := &auth.GameClaims{
+		UserId:    usr.GetId(),
+		UserName:  usr.GetName(),
+		UserEmail: usr.GetEmail(),
+		IsAdmin:   isAdmin,
+		StandardClaims: jwt.StandardClaims{
+			Audience:  "medieval",
+			ExpiresAt: time.Now().Add(8 * time.Hour).Unix(),
+			Id:        uuid.NewV4().String(),
+			IssuedAt:  time.Now().Unix(),
+			Issuer:    "users-service",
+			NotBefore: time.Now().Unix(),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodRS512, claims)
+	tokenString, err := token.SignedString(s.cfg.RSAPrivateKey)
+	if err != nil {
+		logger.WithError(err).Error("Failed to sign claim")
+		return nil, status.Error(codes.Internal, "Unable to login")
+	}
+
+	return &pb.LoginResponse{Token: tokenString}, nil
+}
+
+func (s *UsersServer) hideSensitiveInfo(usr *pb.User) {
+	usr.Password = ""
+}
+
+func (s *UsersServer) findUserByProvidedID(ctx context.Context, logger *logrus.Entry, providedID string) (*pb.User, error) {
+	var existingUser pb.UserORM
+	searchCriterias := []string{"id", "name", "email"}
+	userFound := false
+	for _, searchCriteria := range searchCriterias {
+		if err := s.cfg.Database.Where(fmt.Sprintf("%v = ?", searchCriteria), providedID).First(&existingUser).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				continue
+			} else {
+				logger.WithError(err).Error("Could not find user")
+				return nil, status.Error(codes.Internal, "Could not find user")
+			}
+		}
+		userFound = true
+		break
+	}
+
+	if userFound {
+		pbUser, err := existingUser.ToPB(ctx)
+		if err != nil {
+			logger.WithError(err).Error("Could not find user")
+			return nil, status.Error(codes.Internal, "Could not find user")
+		}
+		return &pbUser, nil
+	}
+
+	logger.Error("Could not find user by any criteria")
+	return nil, status.Error(codes.NotFound, "Could not find user")
 }
