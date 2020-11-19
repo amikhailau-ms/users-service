@@ -7,7 +7,7 @@ CREATE TABLE store_items (
   name varchar DEFAULT NULL,
   type int NOT NULL,
   image_id varchar NOT NULL,
-  description text DEFAULT NULL
+  description text DEFAULT NULL,
   coins_price int NOT NULL,
   gems_price int NOT NULL,
   UNIQUE(name),
