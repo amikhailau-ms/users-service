@@ -76,7 +76,7 @@ func (s *UsersStatsServer) UpdateStats(ctx context.Context, req *pb.UpdateUserSt
 func (s *UsersStatsServer) getDBStats(logger *logrus.Entry, username string) (*pb.UserStatsORM, error) {
 	var usr pb.UserORM
 	var stats []*pb.UserStatsORM
-	if err := s.cfg.Database.Model(&usr).Where("name = ?", username).Association("UserStats").Find(&stats).Error; err != nil {
+	if err := s.cfg.Database.Model(&usr).Where("name = ?", username).Association("stats").Find(&stats).Error; err != nil {
 		logger.WithError(err).Error("Could not fetch user stats")
 		return nil, status.Error(codes.Internal, "Could not fetch user stats")
 	}
