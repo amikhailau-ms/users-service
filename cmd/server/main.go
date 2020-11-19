@@ -110,6 +110,10 @@ func ServeExternal(logger *logrus.Logger) error {
 			),
 			gateway.WithServerAddress(fmt.Sprintf("%s:%s", viper.GetString("server.address"), viper.GetString("server.port"))),
 			gateway.WithEndpointRegistration(viper.GetString("gateway.endpoint"), pb.RegisterUsersServiceHandlerFromEndpoint),
+			gateway.WithEndpointRegistration(viper.GetString("gateway.endpoint"), pb.RegisterUsersHandlerFromEndpoint),
+			gateway.WithEndpointRegistration(viper.GetString("gateway.endpoint"), pb.RegisterUsersStatsHandlerFromEndpoint),
+			gateway.WithEndpointRegistration(viper.GetString("gateway.endpoint"), pb.RegisterNewsServiceHandlerFromEndpoint),
+			gateway.WithEndpointRegistration(viper.GetString("gateway.endpoint"), pb.RegisterStoreItemsHandlerFromEndpoint),
 		),
 		server.WithHandler("/swagger/", NewSwaggerHandler(viper.GetString("gateway.swaggerFile"))),
 	)
