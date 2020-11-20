@@ -101,7 +101,8 @@ func NewGRPCServer(logger *logrus.Logger, dbConnectionString string) (*grpc.Serv
 	pb.RegisterStoreItemsServer(grpcServer, stiS)
 
 	usrstsS, err := svc.NewUsersStatsServer(&svc.UsersStatsServerConfig{
-		Database: db,
+		Database:    db,
+		UsersServer: usrS,
 	})
 	if err != nil {
 		return nil, err

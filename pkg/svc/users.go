@@ -158,7 +158,9 @@ func (s *UsersServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 		return nil, status.Error(codes.InvalidArgument, "Invalid login/password")
 	}
 
-	var isAdmin bool
+	var isAdmin struct {
+		Value bool
+	}
 	if err := s.cfg.Database.Raw("SELECT is_admin FROM users WHERE id = ?", usr.GetId()).Scan(&isAdmin).Error; err != nil {
 		logger.WithError(err).Error("Failed to fetch is_admin attribute")
 		return nil, status.Error(codes.Internal, "Unable to login")
@@ -168,7 +170,7 @@ func (s *UsersServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 		UserId:    usr.GetId(),
 		UserName:  usr.GetName(),
 		UserEmail: usr.GetEmail(),
-		IsAdmin:   isAdmin,
+		IsAdmin:   isAdmin.Value,
 		StandardClaims: jwt.StandardClaims{
 			Audience:  "medieval",
 			ExpiresAt: time.Now().Add(8 * time.Hour).Unix(),
