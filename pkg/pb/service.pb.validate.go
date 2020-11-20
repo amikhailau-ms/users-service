@@ -1105,6 +1105,146 @@ var _ interface {
 	ErrorName() string
 } = LoginResponseValidationError{}
 
+// Validate checks the field values on GrantCurrenciesRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *GrantCurrenciesRequest) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Id
+
+	// no validation rules for AddCoins
+
+	// no validation rules for AddGems
+
+	return nil
+}
+
+// GrantCurrenciesRequestValidationError is the validation error returned by
+// GrantCurrenciesRequest.Validate if the designated constraints aren't met.
+type GrantCurrenciesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GrantCurrenciesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GrantCurrenciesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GrantCurrenciesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GrantCurrenciesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GrantCurrenciesRequestValidationError) ErrorName() string {
+	return "GrantCurrenciesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GrantCurrenciesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGrantCurrenciesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GrantCurrenciesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GrantCurrenciesRequestValidationError{}
+
+// Validate checks the field values on GrantCurrenciesResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *GrantCurrenciesResponse) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// GrantCurrenciesResponseValidationError is the validation error returned by
+// GrantCurrenciesResponse.Validate if the designated constraints aren't met.
+type GrantCurrenciesResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GrantCurrenciesResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GrantCurrenciesResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GrantCurrenciesResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GrantCurrenciesResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GrantCurrenciesResponseValidationError) ErrorName() string {
+	return "GrantCurrenciesResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GrantCurrenciesResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGrantCurrenciesResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GrantCurrenciesResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GrantCurrenciesResponseValidationError{}
+
 // Validate checks the field values on StoreItem with the rules defined in the
 // proto definition for this message. If any rules are violated, an error is returned.
 func (m *StoreItem) Validate() error {
