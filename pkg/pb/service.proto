@@ -122,6 +122,14 @@ message LoginResponse {
   string token = 1;
 }
 
+message GrantCurrenciesRequest {
+  string id = 1;
+  int64 add_coins = 2;
+  int64 add_gems = 3;
+}
+
+message GrantCurrenciesResponse {}
+
 service Users {
   option (gorm.server) = {
       autogen: true,
@@ -170,6 +178,13 @@ service Users {
     option (google.api.http) = {
         post: "/users/login"
         body: "*"
+    };
+  }
+
+  rpc GrantCurrencies (GrantCurrenciesRequest) returns (GrantCurrenciesResponse) {
+    option (google.api.http) = {
+      post: "/users/{id}/currencies"
+      body: "*"
     };
   }
 }
