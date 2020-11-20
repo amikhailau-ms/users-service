@@ -26,7 +26,7 @@ const (
 	defaultDatabaseName     = "d5nd99u2372p7i"
 	defaultDatabaseUser     = "ferfejzttdnois"
 	defaultDatabasePassword = "3b465615b3448ae437120fcc39c05a07eb243c23f557628f60b010cc88554c2e"
-	defaultDatabaseSSL      = "disable"
+	defaultDatabaseSSL      = "require"
 	defaultDatabaseOption   = ""
 
 	// Health

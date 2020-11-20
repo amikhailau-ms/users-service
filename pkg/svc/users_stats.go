@@ -12,7 +12,8 @@ import (
 )
 
 type UsersStatsServerConfig struct {
-	Database *gorm.DB
+	Database    *gorm.DB
+	UsersServer *UsersServer
 }
 
 type UsersStatsServer struct {
@@ -35,7 +36,7 @@ func (s *UsersStatsServer) GetStats(ctx context.Context, req *pb.ReadUserStatsRe
 	})
 	logger.Debug("Read user stats")
 
-	stats, err := s.getDBStats(logger, req.GetUsername())
+	stats, err := s.getDBStats(ctx, logger, req.GetUsername())
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +56,7 @@ func (s *UsersStatsServer) UpdateStats(ctx context.Context, req *pb.UpdateUserSt
 	})
 	logger.Debug("Update user stats")
 
-	stats, err := s.getDBStats(logger, req.GetUsername())
+	stats, err := s.getDBStats(ctx, logger, req.GetUsername())
 	if err != nil {
 		return nil, err
 	}
@@ -73,10 +74,17 @@ func (s *UsersStatsServer) UpdateStats(ctx context.Context, req *pb.UpdateUserSt
 	return &pb.UpdateUserStatsResponse{}, nil
 }
 
-func (s *UsersStatsServer) getDBStats(logger *logrus.Entry, username string) (*pb.UserStatsORM, error) {
-	var usr pb.UserORM
+func (s *UsersStatsServer) getDBStats(ctx context.Context, logger *logrus.Entry, username string) (*pb.UserStatsORM, error) {
+	user, err := s.cfg.UsersServer.findUserByProvidedID(ctx, logger, username)
+	if err != nil {
+		return nil, err
+	}
+
+	usr := pb.UserORM{
+		Id: user.GetId(),
+	}
 	var stats []*pb.UserStatsORM
-	if err := s.cfg.Database.Model(&usr).Where("name = ?", username).Association("stats").Find(&stats).Error; err != nil {
+	if err := s.cfg.Database.Model(&usr).Association("Stats").Find(&stats).Error; err != nil {
 		logger.WithError(err).Error("Could not fetch user stats")
 		return nil, status.Error(codes.Internal, "Could not fetch user stats")
 	}
