@@ -191,6 +191,25 @@ func (s *UsersServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 	return &pb.LoginResponse{Token: tokenString}, nil
 }
 
+func (s *UsersServer) GrantCurrencies(ctx context.Context, req *pb.GrantCurrenciesRequest) (*pb.GrantCurrenciesResponse, error) {
+	logger := ctxlogrus.Extract(ctx).WithField("provided_id", req.GetId())
+	logger.Debug("Grant Currencies")
+
+	usr, err := s.findUserByProvidedID(ctx, logger, req.GetId())
+	if err != nil {
+		return nil, err
+	}
+
+	usrORM := pb.UserORM{Id: usr.Id}
+	if err := s.cfg.Database.Model(&usrORM).
+		Updates(map[string]interface{}{"coins": usr.GetCoins() + req.GetAddCoins(), "gems": usr.GetGems() + req.GetAddGems()}).Error; err != nil {
+		logger.WithError(err).Error("Unable to grant currencies")
+		return nil, status.Error(codes.Internal, "Unable to grant currencies")
+	}
+
+	return &pb.GrantCurrenciesResponse{}, nil
+}
+
 func (s *UsersServer) hideSensitiveInfo(usr *pb.User) {
 	usr.Password = ""
 }

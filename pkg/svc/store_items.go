@@ -236,7 +236,7 @@ func (s *StoreItemsServer) GetUserItemsIds(ctx context.Context, req *pb.GetUserI
 	}
 
 	var items []*pb.StoreItemORM
-	if err := s.cfg.Database.Select("id").Model(&usr).Association("Items").Find(&items).Error; err != nil {
+	if err := s.cfg.Database.Select("store_items.id").Model(&usr).Association("Items").Find(&items).Error; err != nil {
 		logger.WithError(err).Error("Could not fetch user items")
 		return nil, status.Error(codes.Internal, "Could not fetch user items")
 	}
