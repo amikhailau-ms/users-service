@@ -7,7 +7,6 @@ import (
 	"net"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 
 	"github.com/amikhailau/users-service/db"
@@ -126,18 +125,13 @@ func ServeExternal(logger *logrus.Logger) error {
 		logger.Fatalln(err)
 	}
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = viper.GetString("gateway.port")
-	}
-
-	httpL, err := net.Listen("tcp", fmt.Sprintf("%s:%s", viper.GetString("gateway.address"), port))
+	httpL, err := net.Listen("tcp", fmt.Sprintf("%s:%s", viper.GetString("gateway.address"), viper.GetString("gateway.port")))
 	if err != nil {
 		logger.Fatalln(err)
 	}
 
 	logger.Printf("serving gRPC at %s:%s", viper.GetString("server.address"), viper.GetString("server.port"))
-	logger.Printf("serving http at %s:%s", viper.GetString("gateway.address"), port)
+	logger.Printf("serving http at %s:%s", viper.GetString("gateway.address"), viper.GetString("gateway.port"))
 
 	return s.Serve(grpcL, httpL)
 }

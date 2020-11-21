@@ -699,6 +699,38 @@
         }
       }
     },
+    "/users/{id}/currencies": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "UsersGrantCurrencies",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceGrantCurrenciesRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "POST operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceGrantCurrenciesResponse"
+            }
+          }
+        }
+      }
+    },
     "/version": {
       "get": {
         "tags": [
@@ -839,6 +871,26 @@
           }
         }
       }
+    },
+    "serviceGrantCurrenciesRequest": {
+      "type": "object",
+      "properties": {
+        "add_coins": {
+          "type": "string",
+          "format": "int64"
+        },
+        "add_gems": {
+          "type": "string",
+          "format": "int64"
+        },
+        "id": {
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "serviceGrantCurrenciesResponse": {
+      "type": "object"
     },
     "serviceListNewsResponse": {
       "type": "object",

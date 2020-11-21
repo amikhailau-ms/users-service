@@ -25,6 +25,8 @@ It has these top-level messages:
 	ListUsersResponse
 	LoginRequest
 	LoginResponse
+	GrantCurrenciesRequest
+	GrantCurrenciesResponse
 	StoreItem
 	CreateStoreItemRequest
 	CreateStoreItemResponse
@@ -2082,6 +2084,12 @@ type UsersUserWithAfterList interface {
 // Login ...
 func (m *UsersDefaultServer) Login(ctx context.Context, in *LoginRequest) (*LoginResponse, error) {
 	out := &LoginResponse{}
+	return out, nil
+}
+
+// GrantCurrencies ...
+func (m *UsersDefaultServer) GrantCurrencies(ctx context.Context, in *GrantCurrenciesRequest) (*GrantCurrenciesResponse, error) {
+	out := &GrantCurrenciesResponse{}
 	return out, nil
 }
 
