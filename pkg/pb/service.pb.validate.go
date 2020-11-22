@@ -1048,6 +1048,18 @@ func (m *LoginResponse) Validate() error {
 
 	// no validation rules for Token
 
+	if v, ok := interface{}(m.GetExpiresAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return LoginResponseValidationError{
+				field:  "ExpiresAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for IsAdmin
+
 	return nil
 }
 

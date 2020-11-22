@@ -4,6 +4,8 @@ import (
 	"io/ioutil"
 	"time"
 
+	"github.com/amikhailau/users-service/pkg/auth"
+
 	"github.com/amikhailau/users-service/pkg/pb"
 	"github.com/amikhailau/users-service/pkg/svc"
 	"github.com/dgrijalva/jwt-go"
@@ -32,6 +34,8 @@ func NewGRPCServer(logger *logrus.Logger, dbConnectionString string) (*grpc.Serv
 			grpc_middleware.ChainUnaryServer(
 				// logging middleware
 				grpc_logrus.UnaryServerInterceptor(logrus.NewEntry(logger)),
+
+				auth.UnaryServerInterceptor(),
 
 				// Request-Id interceptor
 				requestid.UnaryServerInterceptor(),
