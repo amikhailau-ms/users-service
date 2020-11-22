@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/amikhailau/users-service/pkg/auth"
 	"github.com/amikhailau/users-service/pkg/pb"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus/ctxlogrus"
 	"github.com/jinzhu/gorm"
@@ -168,6 +169,12 @@ func (s *StoreItemsServer) BuyByUser(ctx context.Context, req *pb.BuyByUserReque
 	})
 	logger.Debug("Buying item")
 
+	claims, _ := auth.GetAuthorizationData(ctx)
+	if !claims.IsAdmin && claims.UserId != req.GetUserId() {
+		logger.Error("User can only use this endpoint for themselves")
+		return nil, status.Error(codes.Unauthenticated, "Not authorized for another user")
+	}
+
 	var usr pb.UserORM
 	var item pb.StoreItemORM
 
@@ -224,6 +231,12 @@ func (s *StoreItemsServer) BuyByUser(ctx context.Context, req *pb.BuyByUserReque
 func (s *StoreItemsServer) GetUserItemsIds(ctx context.Context, req *pb.GetUserItemsIdsRequest) (*pb.GetUserItemsIdsResponse, error) {
 	logger := ctxlogrus.Extract(ctx).WithField("user_id", req.GetUserId())
 	logger.Debug("GetUserItemsIds")
+
+	claims, _ := auth.GetAuthorizationData(ctx)
+	if !claims.IsAdmin && claims.UserId != req.GetUserId() {
+		logger.Error("User can only use this endpoint for themselves")
+		return nil, status.Error(codes.Unauthenticated, "Not authorized for another user")
+	}
 
 	var usr pb.UserORM
 	if err := s.cfg.Database.Where("id = ?", req.GetUserId()).First(&usr).Error; err != nil {

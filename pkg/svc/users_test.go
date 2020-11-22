@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"testing"
 
+	"google.golang.org/grpc/metadata"
+
 	"github.com/amikhailau/users-service/pkg/pb"
 
 	sqlmock "github.com/DATA-DOG/go-sqlmock"
@@ -16,9 +18,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	token = "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYTMyYzk2Y2QtOGNlZS00OTA2LTgyZjItODMwMmVhYTAzYTE5IiwidXNlcm5hbWUiOiJQcm90aGVhbiIsInVzZXJfZW1haWwiOiJhbnRob255Lm1pa2hheWxvdkBnbWFpbC5jb20iLCJpc19hZG1pbiI6dHJ1ZSwiYXVkIjoibWVkaWV2YWwiLCJleHAiOjE5Njc4NDQ4MTMsImp0aSI6ImE1YWMxOGU4LThiNTYtNDJjZS1iNDUzLWRiZTA0YzQzYzNmYyIsImlhdCI6MTYwNjA0NDgxMywiaXNzIjoidXNlcnMtc2VydmljZSIsIm5iZiI6MTYwNjA0NDgxM30.a6dJ3-XWMKgkBkuoanXBQJ4RNoBVuE-M9lJ5VNeCJuBHKQTcQ6PCjQ3_bCs0eML-RfYYnIfeUv-ggLkTwtNIOFmp9XgVwxED_IT2t1WKZATWP7BwbnlefE_sXxjHCKsbO2adI4kjfAW_fIn989_m4AR_QXe9fbHln_l_cTp-4fj26WhozlmYnnBebwUtv2uk1FTnzpYLunVWaATnrSP7eTM0IzvbqigV0-4d_Xn_b3GCvj8hl1KlhkW5IuG2d3c23RmAElHQ0uVazmIZq35Fw1wFgJPaJIm4Jqh8wTTvNyxzqHU0pHLR_RdUKcZ5Jaxacwm6bEFpfj6YI6BMpFh_7BMcxlUJ1_x67wF6U7tITTgbH8Zdjx2MJnDQKm-vFJ0AQ9t5kdhs8-M0MfCKwG_C7OGk2HlBb-mF6t2RNKUL2X7j8xaviH9TSbAewQB1r2sKoQYWml3atA90B81fw5FWBmkaBS95V2r5LwcB5Nny2x4L0xqachAw2fCC4Sq735oa-KjDOrpCxh6f0ZdRA_69jgoBwlseIFTkfRlXIR53HmVadH5Q_v0zfZtO4kAc57dWZ1scPu3rpw1cey_qa20fFqj27sSE8Qe9rMYH2D_UESU_UjKC79LfoJyW_jkMEjHbXQLVrn8p7x-7Ld9Y8gA7YimaDlw5YQh-3RXkLErvMbo"
+)
+
 func TestUsers(t *testing.T) {
 	logger := logrus.New()
 	ctx := ctxlogrus.ToContext(context.TODO(), logrus.NewEntry(logger))
+	ctx = metadata.NewOutgoingContext(ctx, metadata.New(map[string]string{"Authorization": "Bearer " + token}))
 
 	db, mock, err := sqlmock.New()
 	if err != nil {

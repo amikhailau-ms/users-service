@@ -10,6 +10,7 @@ import (
 
 	"github.com/amikhailau/users-service/pkg/auth"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/golang/protobuf/ptypes"
 
 	"github.com/amikhailau/users-service/pkg/pb"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus/ctxlogrus"
@@ -39,6 +40,10 @@ func NewUsersServer(cfg *UsersServerConfig) (*UsersServer, error) {
 		cfg:         cfg,
 	}, nil
 }
+
+const (
+	adminQuery = "SELECT is_admin FROM users WHERE id = $1"
+)
 
 func (s *UsersServer) Create(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	logger := ctxlogrus.Extract(ctx).WithFields(logrus.Fields{
@@ -103,6 +108,12 @@ func (s *UsersServer) Read(ctx context.Context, req *pb.ReadUserRequest) (*pb.Re
 	logger := ctxlogrus.Extract(ctx).WithField("provided_id", req.GetId())
 	logger.Debug("Read user")
 
+	claims, _ := auth.GetAuthorizationData(ctx)
+	if !claims.IsAdmin && claims.UserId != req.GetId() && claims.UserName != req.GetId() && claims.UserEmail != req.GetId() {
+		logger.Error("User can only use this endpoint for themselves")
+		return nil, status.Error(codes.Unauthenticated, "Not authorized for another user")
+	}
+
 	usr, err := s.findUserByProvidedID(ctx, logger, req.GetId())
 	if err != nil {
 		return nil, err
@@ -114,6 +125,12 @@ func (s *UsersServer) Read(ctx context.Context, req *pb.ReadUserRequest) (*pb.Re
 func (s *UsersServer) Delete(ctx context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
 	logger := ctxlogrus.Extract(ctx).WithField("id", req.GetId())
 	logger.Debug("Delete user")
+
+	claims, _ := auth.GetAuthorizationData(ctx)
+	if !claims.IsAdmin && claims.UserId != req.GetId() {
+		logger.Error("User can only use this endpoint for themselves")
+		return nil, status.Error(codes.Unauthenticated, "Not authorized for another user")
+	}
 
 	var user pb.UserORM
 	if err := s.cfg.Database.Where("id = ?", req.GetId()).Delete(&user).Error; err != nil && err != gorm.ErrRecordNotFound {
@@ -158,22 +175,21 @@ func (s *UsersServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 		return nil, status.Error(codes.InvalidArgument, "Invalid login/password")
 	}
 
-	var isAdmin struct {
-		Value bool
-	}
-	if err := s.cfg.Database.Raw("SELECT is_admin FROM users WHERE id = ?", usr.GetId()).Scan(&isAdmin).Error; err != nil {
+	isAdmin := false
+	if err := s.cfg.Database.DB().QueryRow(adminQuery, usr.GetId()).Scan(&isAdmin); err != nil {
 		logger.WithError(err).Error("Failed to fetch is_admin attribute")
 		return nil, status.Error(codes.Internal, "Unable to login")
 	}
 
+	expiresAt := time.Now().Add(8 * time.Hour)
 	claims := &auth.GameClaims{
 		UserId:    usr.GetId(),
 		UserName:  usr.GetName(),
 		UserEmail: usr.GetEmail(),
-		IsAdmin:   isAdmin.Value,
+		IsAdmin:   isAdmin,
 		StandardClaims: jwt.StandardClaims{
 			Audience:  "medieval",
-			ExpiresAt: time.Now().Add(8 * time.Hour).Unix(),
+			ExpiresAt: expiresAt.Unix(),
 			Id:        uuid.NewV4().String(),
 			IssuedAt:  time.Now().Unix(),
 			Issuer:    "users-service",
@@ -188,7 +204,13 @@ func (s *UsersServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 		return nil, status.Error(codes.Internal, "Unable to login")
 	}
 
-	return &pb.LoginResponse{Token: tokenString}, nil
+	expiresAtPb, err := ptypes.TimestampProto(expiresAt)
+	if err != nil {
+		logger.WithError(err).Error("Failed to convert unix time to proto timestamp")
+		return nil, status.Errorf(codes.Internal, "Unable to login")
+	}
+
+	return &pb.LoginResponse{Token: tokenString, ExpiresAt: expiresAtPb, IsAdmin: isAdmin}, nil
 }
 
 func (s *UsersServer) GrantCurrencies(ctx context.Context, req *pb.GrantCurrenciesRequest) (*pb.GrantCurrenciesResponse, error) {
