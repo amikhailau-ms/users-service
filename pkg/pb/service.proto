@@ -262,12 +262,32 @@ message BuyByUserRequest {
 
 message BuyByUserResponse {}
 
+message EquipByUserRequest {
+  string user_id = 1;
+  string item_id = 2;
+}
+
+message EquipByUserResponse {}
+
 message GetUserItemsIdsRequest {
   string user_id = 1;
 }
 
+message UserItemInfo {
+  string item_id = 1;
+  bool equipped = 2;
+}
+
 message GetUserItemsIdsResponse {
-  repeated string item_ids = 1;
+  repeated UserItemInfo items = 1;
+}
+
+message GetEquippedUserItemsIdsRequest {
+  string user_id = 1;
+}
+
+message GetEquippedUserItemsIdsResponse {
+  repeated UserItemInfo items = 1;
 }
 
 service StoreItems {
@@ -324,6 +344,19 @@ service StoreItems {
   rpc GetUserItemsIds (GetUserItemsIdsRequest) returns (GetUserItemsIdsResponse) {
     option (google.api.http) = {
             get: "/store_items/user/{user_id}"
+        };
+  }
+
+  rpc GetEquippedUserItemsIds (GetEquippedUserItemsIdsRequest) returns (GetEquippedUserItemsIdsResponse) {
+    option (google.api.http) = {
+            get: "/store_items/user/{user_id}/equipped"
+        };
+  }
+
+  rpc EquipByUser (EquipByUserRequest) returns (EquipByUserResponse) {
+    option (google.api.http) = {
+            post: "/store_items/equip"
+            body: "*"
         };
   }
 }
