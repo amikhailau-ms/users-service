@@ -2272,6 +2272,144 @@ var _ interface {
 	ErrorName() string
 } = BuyByUserResponseValidationError{}
 
+// Validate checks the field values on EquipByUserRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *EquipByUserRequest) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for UserId
+
+	// no validation rules for ItemId
+
+	return nil
+}
+
+// EquipByUserRequestValidationError is the validation error returned by
+// EquipByUserRequest.Validate if the designated constraints aren't met.
+type EquipByUserRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e EquipByUserRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e EquipByUserRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e EquipByUserRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e EquipByUserRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e EquipByUserRequestValidationError) ErrorName() string {
+	return "EquipByUserRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e EquipByUserRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sEquipByUserRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = EquipByUserRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = EquipByUserRequestValidationError{}
+
+// Validate checks the field values on EquipByUserResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *EquipByUserResponse) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// EquipByUserResponseValidationError is the validation error returned by
+// EquipByUserResponse.Validate if the designated constraints aren't met.
+type EquipByUserResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e EquipByUserResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e EquipByUserResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e EquipByUserResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e EquipByUserResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e EquipByUserResponseValidationError) ErrorName() string {
+	return "EquipByUserResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e EquipByUserResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sEquipByUserResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = EquipByUserResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = EquipByUserResponseValidationError{}
+
 // Validate checks the field values on GetUserItemsIdsRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, an error is returned.
@@ -2341,12 +2479,96 @@ var _ interface {
 	ErrorName() string
 } = GetUserItemsIdsRequestValidationError{}
 
+// Validate checks the field values on UserItemInfo with the rules defined in
+// the proto definition for this message. If any rules are violated, an error
+// is returned.
+func (m *UserItemInfo) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for ItemId
+
+	// no validation rules for Equipped
+
+	return nil
+}
+
+// UserItemInfoValidationError is the validation error returned by
+// UserItemInfo.Validate if the designated constraints aren't met.
+type UserItemInfoValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserItemInfoValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserItemInfoValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserItemInfoValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserItemInfoValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserItemInfoValidationError) ErrorName() string { return "UserItemInfoValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UserItemInfoValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserItemInfo.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserItemInfoValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserItemInfoValidationError{}
+
 // Validate checks the field values on GetUserItemsIdsResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, an error is returned.
 func (m *GetUserItemsIdsResponse) Validate() error {
 	if m == nil {
 		return nil
+	}
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetUserItemsIdsResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	return nil

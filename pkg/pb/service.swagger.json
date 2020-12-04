@@ -365,6 +365,32 @@
         }
       }
     },
+    "/store_items/equip": {
+      "post": {
+        "tags": [
+          "StoreItems"
+        ],
+        "operationId": "StoreItemsEquipByUser",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceEquipByUserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "POST operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceEquipByUserResponse"
+            }
+          }
+        }
+      }
+    },
     "/store_items/user/{user_id}": {
       "get": {
         "tags": [
@@ -861,13 +887,27 @@
         }
       }
     },
+    "serviceEquipByUserRequest": {
+      "type": "object",
+      "properties": {
+        "item_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "serviceEquipByUserResponse": {
+      "type": "object"
+    },
     "serviceGetUserItemsIdsResponse": {
       "type": "object",
       "properties": {
-        "item_ids": {
+        "items": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/serviceUserItemInfo"
           }
         }
       }
@@ -1152,6 +1192,18 @@
         },
         "stats": {
           "$ref": "#/definitions/serviceUserStats"
+        }
+      }
+    },
+    "serviceUserItemInfo": {
+      "type": "object",
+      "properties": {
+        "equipped": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "item_id": {
+          "type": "string"
         }
       }
     },
