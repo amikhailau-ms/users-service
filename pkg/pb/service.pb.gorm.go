@@ -40,8 +40,13 @@ It has these top-level messages:
 	ListStoreItemsResponse
 	BuyByUserRequest
 	BuyByUserResponse
+	EquipByUserRequest
+	EquipByUserResponse
 	GetUserItemsIdsRequest
+	UserItemInfo
 	GetUserItemsIdsResponse
+	GetEquippedUserItemsIdsRequest
+	GetEquippedUserItemsIdsResponse
 	UserStats
 	ReadUserStatsRequest
 	ReadUserStatsResponse
@@ -2266,6 +2271,18 @@ func (m *StoreItemsDefaultServer) BuyByUser(ctx context.Context, in *BuyByUserRe
 // GetUserItemsIds ...
 func (m *StoreItemsDefaultServer) GetUserItemsIds(ctx context.Context, in *GetUserItemsIdsRequest) (*GetUserItemsIdsResponse, error) {
 	out := &GetUserItemsIdsResponse{}
+	return out, nil
+}
+
+// GetEquippedUserItemsIds ...
+func (m *StoreItemsDefaultServer) GetEquippedUserItemsIds(ctx context.Context, in *GetEquippedUserItemsIdsRequest) (*GetEquippedUserItemsIdsResponse, error) {
+	out := &GetEquippedUserItemsIdsResponse{}
+	return out, nil
+}
+
+// EquipByUser ...
+func (m *StoreItemsDefaultServer) EquipByUser(ctx context.Context, in *EquipByUserRequest) (*EquipByUserResponse, error) {
+	out := &EquipByUserResponse{}
 	return out, nil
 }
 
