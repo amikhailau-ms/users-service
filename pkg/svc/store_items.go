@@ -3,6 +3,7 @@ package svc
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/amikhailau/users-service/pkg/auth"
 	"github.com/amikhailau/users-service/pkg/pb"
@@ -24,6 +25,14 @@ type StoreItemsServer struct {
 }
 
 var _ pb.StoreItemsServer = &StoreItemsServer{}
+
+const (
+	deequipQuery           = "UPDATE users_store_items SET equipped = 'f' WHERE user_id = $1 AND store_item_id = $2"
+	equipQuery             = "UPDATE users_store_items SET equipped = 't' WHERE user_id = $1 AND store_item_id = $2"
+	userItemsQuery         = "SELECT store_item_id, equipped FROM users_store_items WHERE user_id = $1"
+	equippedUserItemsQuery = "SELECT store_item_id, equipped FROM users_store_items WHERE user_id = $1 AND equipped = 't'"
+	findEquippedQuery      = "SELECT si.id FROM store_items si JOIN users_store_items usi ON usi.store_item_id = si.id WHERE si.type = $1 AND usi.user_id = $2 AND usi.equipped = $3"
+)
 
 func NewStoreItemsServer(cfg *StoreItemsServerConfig) (*StoreItemsServer, error) {
 	return &StoreItemsServer{
@@ -233,7 +242,7 @@ func (s *StoreItemsServer) GetUserItemsIds(ctx context.Context, req *pb.GetUserI
 	logger.Debug("GetUserItemsIds")
 
 	claims, _ := auth.GetAuthorizationData(ctx)
-	if !claims.IsAdmin && claims.UserId != req.GetUserId() {
+	if !claims.IsAdmin && claims.StandardClaims.Audience != "svc" && claims.UserId != req.GetUserId() {
 		logger.Error("User can only use this endpoint for themselves")
 		return nil, status.Error(codes.Unauthenticated, "Not authorized for another user")
 	}
@@ -248,18 +257,120 @@ func (s *StoreItemsServer) GetUserItemsIds(ctx context.Context, req *pb.GetUserI
 		return nil, status.Error(codes.Internal, "Could not find user")
 	}
 
-	var items []*pb.StoreItemORM
-	if err := s.cfg.Database.Select("store_items.id").Model(&usr).Association("Items").Find(&items).Error; err != nil {
+	items := []*pb.UserItemInfo{}
+	rows, err := s.cfg.Database.DB().Query(userItemsQuery, req.GetUserId())
+	if err != nil {
 		logger.WithError(err).Error("Could not fetch user items")
 		return nil, status.Error(codes.Internal, "Could not fetch user items")
 	}
-
-	itemsIDs := make([]string, 0, len(items))
-	for _, item := range items {
-		itemsIDs = append(itemsIDs, item.Id)
+	for rows.Next() {
+		item := pb.UserItemInfo{}
+		err := rows.Scan(&item.ItemId, &item.Equipped)
+		if err != nil {
+			logger.WithError(err).Error("Could not fetch user items")
+			return nil, status.Error(codes.Internal, "Could not fetch user items")
+		}
+		items = append(items, &item)
 	}
 
-	return &pb.GetUserItemsIdsResponse{ItemIds: itemsIDs}, nil
+	return &pb.GetUserItemsIdsResponse{Items: items}, nil
+}
+
+func (s *StoreItemsServer) GetEquippedUserItemsIds(ctx context.Context, req *pb.GetEquippedUserItemsIdsRequest) (*pb.GetEquippedUserItemsIdsResponse, error) {
+	logger := ctxlogrus.Extract(ctx).WithField("user_id", req.GetUserId())
+	logger.Debug("GetEquippedUserItemsIds")
+
+	claims, _ := auth.GetAuthorizationData(ctx)
+	if !claims.IsAdmin && claims.StandardClaims.Audience != "svc" && claims.UserId != req.GetUserId() {
+		logger.Error("User can only use this endpoint for themselves")
+		return nil, status.Error(codes.Unauthenticated, "Not authorized for another user")
+	}
+
+	var usr pb.UserORM
+	if err := s.cfg.Database.Where("id = ?", req.GetUserId()).First(&usr).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			logger.Error("User not found")
+			return nil, status.Error(codes.NotFound, "User not found")
+		}
+		logger.WithError(err).Error("Could not find user")
+		return nil, status.Error(codes.Internal, "Could not find user")
+	}
+
+	items := []*pb.UserItemInfo{}
+	rows, err := s.cfg.Database.DB().Query(equippedUserItemsQuery, req.GetUserId())
+	if err != nil {
+		logger.WithError(err).Error("Could not fetch user items")
+		return nil, status.Error(codes.Internal, "Could not fetch user items")
+	}
+	for rows.Next() {
+		item := pb.UserItemInfo{}
+		err := rows.Scan(&item.ItemId, &item.Equipped)
+		if err != nil {
+			logger.WithError(err).Error("Could not fetch user items")
+			return nil, status.Error(codes.Internal, "Could not fetch user items")
+		}
+		items = append(items, &item)
+	}
+
+	return &pb.GetEquippedUserItemsIdsResponse{Items: items}, nil
+}
+
+func (s *StoreItemsServer) EquipByUser(ctx context.Context, req *pb.EquipByUserRequest) (*pb.EquipByUserResponse, error) {
+	logger := ctxlogrus.Extract(ctx).WithFields(logrus.Fields{
+		"user_id": req.GetUserId(),
+		"item_id": req.GetItemId(),
+	})
+	logger.Debug("Buying item")
+
+	claims, _ := auth.GetAuthorizationData(ctx)
+	if !claims.IsAdmin && claims.UserId != req.GetUserId() {
+		logger.Error("User can only use this endpoint for themselves")
+		return nil, status.Error(codes.Unauthenticated, "Not authorized for another user")
+	}
+
+	item, err := s.Read(ctx, &pb.ReadStoreItemRequest{Id: req.GetItemId()})
+	if err != nil {
+		return nil, err
+	}
+
+	var itemEquippedId string
+	found := true
+	if err := s.cfg.Database.DB().QueryRow(findEquippedQuery, item.GetResult().GetType(), req.GetUserId(), true).Scan(&itemEquippedId); err != nil {
+		if !strings.Contains(err.Error(), "no rows") {
+			logger.WithError(err).Error("Could not fetch equipped item")
+			return nil, status.Error(codes.Internal, "Could not equip item")
+		}
+		found = false
+	}
+
+	if found && itemEquippedId == item.GetResult().GetId() {
+		logger.Debug("Item has been already equipped")
+		return &pb.EquipByUserResponse{}, nil
+	}
+
+	txnDB, err := s.cfg.Database.DB().Begin()
+	if err != nil {
+		logger.WithError(err).Error("Could not start transaction")
+		return nil, status.Error(codes.Internal, "Could not equip item")
+	}
+
+	if found {
+		if _, err := txnDB.Exec(deequipQuery, req.GetUserId(), itemEquippedId); err != nil {
+			txnDB.Rollback()
+			logger.WithError(err).Error("Could not deequip item")
+			return nil, status.Error(codes.Internal, "Could not equip item")
+		}
+	}
+
+	if _, err := txnDB.Exec(equipQuery, req.GetUserId(), item.GetResult().GetId()); err != nil {
+		txnDB.Rollback()
+		logger.WithError(err).Error("Could not equip item")
+		return nil, status.Error(codes.Internal, "Could not equip item")
+	}
+
+	txnDB.Commit()
+
+	return &pb.EquipByUserResponse{}, nil
 }
 
 func (s *StoreItemsServer) checkIfItemExists(logger *logrus.Entry, name, image_id string, item_type int64) error {

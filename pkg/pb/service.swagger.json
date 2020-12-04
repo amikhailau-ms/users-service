@@ -365,6 +365,32 @@
         }
       }
     },
+    "/store_items/equip": {
+      "post": {
+        "tags": [
+          "StoreItems"
+        ],
+        "operationId": "StoreItemsEquipByUser",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceEquipByUserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "POST operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceEquipByUserResponse"
+            }
+          }
+        }
+      }
+    },
     "/store_items/user/{user_id}": {
       "get": {
         "tags": [
@@ -384,6 +410,30 @@
             "description": "GET operation response",
             "schema": {
               "$ref": "#/definitions/serviceGetUserItemsIdsResponse"
+            }
+          }
+        }
+      }
+    },
+    "/store_items/user/{user_id}/equipped": {
+      "get": {
+        "tags": [
+          "StoreItems"
+        ],
+        "operationId": "StoreItemsGetEquippedUserItemsIds",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "user_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GET operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceGetEquippedUserItemsIdsResponse"
             }
           }
         }
@@ -861,13 +911,38 @@
         }
       }
     },
+    "serviceEquipByUserRequest": {
+      "type": "object",
+      "properties": {
+        "item_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "serviceEquipByUserResponse": {
+      "type": "object"
+    },
+    "serviceGetEquippedUserItemsIdsResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/serviceUserItemInfo"
+          }
+        }
+      }
+    },
     "serviceGetUserItemsIdsResponse": {
       "type": "object",
       "properties": {
-        "item_ids": {
+        "items": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/serviceUserItemInfo"
           }
         }
       }
@@ -1152,6 +1227,18 @@
         },
         "stats": {
           "$ref": "#/definitions/serviceUserStats"
+        }
+      }
+    },
+    "serviceUserItemInfo": {
+      "type": "object",
+      "properties": {
+        "equipped": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "item_id": {
+          "type": "string"
         }
       }
     },
