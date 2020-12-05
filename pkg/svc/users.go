@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/amikhailau/users-service/pkg/auth"
@@ -33,6 +34,10 @@ type UsersServer struct {
 }
 
 var _ pb.UsersServer = &UsersServer{}
+
+const (
+	fetchUsersByStatsQuery = "SELECT u.name, us.games, us.wins, us.top5, us.kills FROM users u JOIN user_stats us ON us.user_id = u.id "
+)
 
 func NewUsersServer(cfg *UsersServerConfig) (*UsersServer, error) {
 	return &UsersServer{
@@ -152,7 +157,52 @@ func (s *UsersServer) List(ctx context.Context, req *pb.ListUsersRequest) (*pb.L
 	logger := ctxlogrus.Extract(ctx)
 	logger.Debug("List users")
 
-	return nil, status.Error(codes.Unimplemented, "Non-MVP endpoint")
+	if req.GetOrderBy() != nil {
+		orderBy := strings.ToLower(req.GetOrderBy().GoString())
+
+		if strings.Contains(orderBy, "kills") || strings.Contains(orderBy, "top5") ||
+			strings.Contains(orderBy, "wins") || strings.Contains(orderBy, "games") {
+			resQuery := fetchUsersByStatsQuery + "ORDER BY " + "us." + strings.Split(orderBy, ",")[0] + " LIMIT 100"
+
+			fmt.Println(resQuery)
+
+			users := []*pb.User{}
+			rows, err := s.cfg.Database.DB().Query(resQuery)
+			if err != nil {
+				logger.WithError(err).Error("Could not fetch users")
+				return nil, status.Error(codes.Internal, "Could not fetch users")
+			}
+			for rows.Next() {
+				user := pb.User{Stats: &pb.UserStats{}}
+				err := rows.Scan(&user.Name, &user.Stats.Games, &user.Stats.Wins, &user.Stats.Top5, &user.Stats.Kills)
+				if err != nil {
+					logger.WithError(err).Error("Could not fetch users by stats")
+					return nil, status.Error(codes.Internal, "Could not fetch users by stats")
+				}
+				users = append(users, &user)
+			}
+
+			return &pb.ListUsersResponse{Results: users}, nil
+		}
+	}
+
+	claims, _ := auth.GetAuthorizationData(ctx)
+	if !claims.IsAdmin && claims.StandardClaims.Audience != "svc" {
+		logger.Error("Restricted access in global usage")
+		return nil, status.Error(codes.Unauthenticated, "Restricted access in global usage - please use _order_by parameter")
+	}
+
+	res, err := pb.DefaultListUser(ctx, s.cfg.Database, req.GetFilter(), req.GetOrderBy(), req.GetPaging(), req.GetFields())
+	if err != nil {
+		logger.WithError(err).Error("Could not list users")
+		return nil, status.Error(codes.Internal, "Could not list users")
+	}
+
+	for _, usr := range res {
+		s.hideSensitiveInfo(usr)
+	}
+
+	return &pb.ListUsersResponse{Results: res}, nil
 }
 
 func (s *UsersServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
@@ -234,6 +284,14 @@ func (s *UsersServer) GrantCurrencies(ctx context.Context, req *pb.GrantCurrenci
 
 func (s *UsersServer) hideSensitiveInfo(usr *pb.User) {
 	usr.Password = ""
+}
+
+func (s *UsersServer) hideAllInfo(usr *pb.User) {
+	usr.Password = ""
+	usr.Email = ""
+	usr.Id = ""
+	usr.Gems = 0
+	usr.Coins = 0
 }
 
 func (s *UsersServer) findUserByProvidedID(ctx context.Context, logger *logrus.Entry, providedID string) (*pb.User, error) {
