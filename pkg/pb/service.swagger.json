@@ -859,15 +859,15 @@
       "type": "object",
       "properties": {
         "coins_price": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "description": {
           "type": "string"
         },
         "gems_price": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "image_id": {
           "type": "string"
@@ -876,8 +876,8 @@
           "type": "string"
         },
         "type": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -951,12 +951,12 @@
       "type": "object",
       "properties": {
         "add_coins": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "add_gems": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "id": {
           "type": "string",
@@ -1095,15 +1095,15 @@
       "type": "object",
       "properties": {
         "coins_price": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "description": {
           "type": "string"
         },
         "gems_price": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "id": {
           "type": "string",
@@ -1116,8 +1116,8 @@
           "type": "string"
         },
         "type": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -1172,20 +1172,20 @@
       "type": "object",
       "properties": {
         "add_games": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "add_kills": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "add_top5": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "add_wins": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "username": {
           "type": "string"
@@ -1199,15 +1199,15 @@
       "type": "object",
       "properties": {
         "coins": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "email": {
           "type": "string"
         },
         "gems": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "id": {
           "type": "string",
@@ -1246,25 +1246,25 @@
       "type": "object",
       "properties": {
         "games": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "id": {
-          "type": "string",
-          "format": "int64",
+          "type": "integer",
+          "format": "int32",
           "readOnly": true
         },
         "kills": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "top5": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         },
         "wins": {
-          "type": "string",
-          "format": "int64"
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

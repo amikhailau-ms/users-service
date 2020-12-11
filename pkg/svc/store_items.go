@@ -373,7 +373,7 @@ func (s *StoreItemsServer) EquipByUser(ctx context.Context, req *pb.EquipByUserR
 	return &pb.EquipByUserResponse{}, nil
 }
 
-func (s *StoreItemsServer) checkIfItemExists(logger *logrus.Entry, name, image_id string, item_type int64) error {
+func (s *StoreItemsServer) checkIfItemExists(logger *logrus.Entry, name, image_id string, item_type int32) error {
 
 	var existingItem pb.StoreItemORM
 	if err := s.cfg.Database.Where("name = ? AND type = ?", name, item_type).First(&existingItem).Error; err == nil {
