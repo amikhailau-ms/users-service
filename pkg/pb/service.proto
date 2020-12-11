@@ -63,8 +63,8 @@ message User {
   string name = 2;
   string email = 3;
   string password = 4;
-  int64 coins = 5;
-  int64 gems = 6;
+  int32 coins = 5;
+  int32 gems = 6;
   repeated StoreItem items = 7 [(gorm.field).many_to_many = {jointable: "users_store_items" preload: false}];
   UserStats stats = 8;
 }
@@ -126,8 +126,8 @@ message LoginResponse {
 
 message GrantCurrenciesRequest {
   string id = 1;
-  int64 add_coins = 2;
-  int64 add_gems = 3;
+  int32 add_coins = 2;
+  int32 add_gems = 3;
 }
 
 message GrantCurrenciesResponse {}
@@ -201,18 +201,18 @@ message StoreItem {
   string id = 1 [(gorm.field).tag = {type: "UUID"  primary_key: true}];
   string name = 2;
   string description = 3;
-  int64 type = 4;
-  int64 coins_price = 5;
-  int64 gems_price = 6;
+  int32 type = 4;
+  int32 coins_price = 5;
+  int32 gems_price = 6;
   string image_id = 7;
 }
 
 message CreateStoreItemRequest {
   string name = 1;
   string description = 2;
-  int64 type = 3;
-  int64 coins_price = 4;
-  int64 gems_price = 5;
+  int32 type = 3;
+  int32 coins_price = 4;
+  int32 gems_price = 5;
   string image_id = 6;
 }
 
@@ -367,11 +367,11 @@ message UserStats {
       multi_account: false
   };
 
-  int64 id = 1 [(gorm.field).tag = {type: "serial"  primary_key: true}];
-  int64 games = 2;
-  int64 wins = 3;
-  int64 top5 = 4;
-  int64 kills = 5;
+  int32 id = 1 [(gorm.field).tag = {type: "serial"  primary_key: true}];
+  int32 games = 2;
+  int32 wins = 3;
+  int32 top5 = 4;
+  int32 kills = 5;
 }
 
 message ReadUserStatsRequest {
@@ -384,10 +384,10 @@ message ReadUserStatsResponse {
 
 message UpdateUserStatsRequest {
   string username = 1;
-  int64 add_games = 2;
-  int64 add_wins = 3;
-  int64 add_top5 = 4;
-  int64 add_kills = 5;
+  int32 add_games = 2;
+  int32 add_wins = 3;
+  int32 add_top5 = 4;
+  int32 add_kills = 5;
 }
 
 message UpdateUserStatsResponse {}
