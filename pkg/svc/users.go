@@ -287,7 +287,7 @@ func (s *UsersServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 		return nil, status.Errorf(codes.Internal, "Unable to login")
 	}
 
-	return &pb.LoginResponse{Token: tokenString, ExpiresAt: expiresAtPb, IsAdmin: isAdmin}, nil
+	return &pb.LoginResponse{Token: tokenString, ExpiresAt: expiresAtPb, IsAdmin: isAdmin, UserId: usr.GetId()}, nil
 }
 
 func (s *UsersServer) GrantCurrencies(ctx context.Context, req *pb.GrantCurrenciesRequest) (*pb.GrantCurrenciesResponse, error) {

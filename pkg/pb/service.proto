@@ -122,6 +122,7 @@ message LoginResponse {
   string token = 1;
   google.protobuf.Timestamp expires_at = 2;
   bool isAdmin = 3;
+  string user_id = 4;
 }
 
 message GrantCurrenciesRequest {

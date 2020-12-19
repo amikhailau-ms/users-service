@@ -1060,6 +1060,8 @@ func (m *LoginResponse) Validate() error {
 
 	// no validation rules for IsAdmin
 
+	// no validation rules for UserId
+
 	return nil
 }
 
