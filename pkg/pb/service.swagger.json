@@ -875,6 +875,18 @@
         "name": {
           "type": "string"
         },
+        "on_sale": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "sale_coins_price": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sale_gems_price": {
+          "type": "integer",
+          "format": "int32"
+        },
         "type": {
           "type": "integer",
           "format": "int32"
@@ -1117,6 +1129,18 @@
         },
         "name": {
           "type": "string"
+        },
+        "on_sale": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "sale_coins_price": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sale_gems_price": {
+          "type": "integer",
+          "format": "int32"
         },
         "type": {
           "type": "integer",

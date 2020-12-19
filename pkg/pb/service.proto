@@ -206,6 +206,9 @@ message StoreItem {
   int32 coins_price = 5;
   int32 gems_price = 6;
   string image_id = 7;
+  bool on_sale = 8;
+  int32 sale_coins_price = 9;
+  int32 sale_gems_price = 10;
 }
 
 message CreateStoreItemRequest {
@@ -215,6 +218,9 @@ message CreateStoreItemRequest {
   int32 coins_price = 4;
   int32 gems_price = 5;
   string image_id = 6;
+  bool on_sale = 7;
+  int32 sale_coins_price = 8;
+  int32 sale_gems_price = 9;
 }
 
 message CreateStoreItemResponse {

@@ -1280,6 +1280,12 @@ func (m *StoreItem) Validate() error {
 
 	// no validation rules for ImageId
 
+	// no validation rules for OnSale
+
+	// no validation rules for SaleCoinsPrice
+
+	// no validation rules for SaleGemsPrice
+
 	return nil
 }
 
@@ -1356,6 +1362,12 @@ func (m *CreateStoreItemRequest) Validate() error {
 	// no validation rules for GemsPrice
 
 	// no validation rules for ImageId
+
+	// no validation rules for OnSale
+
+	// no validation rules for SaleCoinsPrice
+
+	// no validation rules for SaleGemsPrice
 
 	return nil
 }

@@ -53,13 +53,16 @@ func (s *StoreItemsServer) Create(ctx context.Context, req *pb.CreateStoreItemRe
 	}
 
 	newItem := pb.StoreItemORM{
-		Id:          uuid.NewV4().String(),
-		Name:        req.GetName(),
-		Description: req.GetDescription(),
-		Type:        req.GetType(),
-		CoinsPrice:  req.GetCoinsPrice(),
-		GemsPrice:   req.GetGemsPrice(),
-		ImageId:     req.GetImageId(),
+		Id:             uuid.NewV4().String(),
+		Name:           req.GetName(),
+		Description:    req.GetDescription(),
+		Type:           req.GetType(),
+		CoinsPrice:     req.GetCoinsPrice(),
+		GemsPrice:      req.GetGemsPrice(),
+		ImageId:        req.GetImageId(),
+		OnSale:         req.GetOnSale(),
+		SaleCoinsPrice: req.GetSaleCoinsPrice(),
+		SaleGemsPrice:  req.GetSaleGemsPrice(),
 	}
 
 	if err := s.cfg.Database.Create(&newItem).Error; err != nil {
@@ -129,6 +132,11 @@ func (s *StoreItemsServer) Update(ctx context.Context, req *pb.UpdateStoreItemRe
 		}
 		if req.GetPayload().GetDescription() != "" {
 			item.Description = req.GetPayload().GetDescription()
+		}
+		if req.GetPayload().GetSaleCoinsPrice() != 0 || req.GetPayload().GetSaleGemsPrice() != 0 {
+			item.OnSale = true
+			item.SaleCoinsPrice = req.GetPayload().GetSaleCoinsPrice()
+			item.SaleGemsPrice = req.GetPayload().GetSaleGemsPrice()
 		}
 		gormReq = &pb.UpdateStoreItemRequest{Payload: item}
 	}
@@ -205,20 +213,35 @@ func (s *StoreItemsServer) BuyByUser(ctx context.Context, req *pb.BuyByUserReque
 		return nil, status.Error(codes.Internal, "Could not find item")
 	}
 
-	if usr.Gems < item.GemsPrice {
-		logger.Error("Not enough gems")
-		return nil, status.Error(codes.InvalidArgument, "Not enough gems")
-	}
+	if item.OnSale {
+		if usr.Gems < item.SaleGemsPrice {
+			logger.Error("Not enough gems")
+			return nil, status.Error(codes.InvalidArgument, "Not enough gems")
+		}
 
-	if usr.Coins < item.CoinsPrice {
-		logger.Error("Not enough coins")
-		return nil, status.Error(codes.InvalidArgument, "Not enough coins")
+		if usr.Coins < item.SaleCoinsPrice {
+			logger.Error("Not enough coins")
+			return nil, status.Error(codes.InvalidArgument, "Not enough coins")
+		}
+
+		usr.Gems -= item.SaleGemsPrice
+		usr.Coins -= item.SaleCoinsPrice
+	} else {
+		if usr.Gems < item.GemsPrice {
+			logger.Error("Not enough gems")
+			return nil, status.Error(codes.InvalidArgument, "Not enough gems")
+		}
+
+		if usr.Coins < item.CoinsPrice {
+			logger.Error("Not enough coins")
+			return nil, status.Error(codes.InvalidArgument, "Not enough coins")
+		}
+
+		usr.Gems -= item.GemsPrice
+		usr.Coins -= item.CoinsPrice
 	}
 
 	txnDB := s.cfg.Database.Begin()
-
-	usr.Gems -= item.GemsPrice
-	usr.Coins -= item.CoinsPrice
 
 	if err := txnDB.Save(&usr).Error; err != nil {
 		txnDB.Rollback()
