@@ -6,8 +6,10 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"regexp"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/amikhailau/users-service/pkg/auth"
 	"github.com/dgrijalva/jwt-go"
@@ -39,6 +41,11 @@ const (
 	fetchUsersByStatsQuery = "SELECT u.name, us.games, us.wins, us.top5, us.kills FROM users u JOIN user_stats us ON us.user_id = u.id "
 )
 
+var (
+	regexpName  = regexp.MustCompile("^[a-zA-Z]{1}[a-zA-Z0-9]+$")
+	regexpEmail = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+)
+
 func NewUsersServer(cfg *UsersServerConfig) (*UsersServer, error) {
 	return &UsersServer{
 		UsersServer: &pb.UsersDefaultServer{},
@@ -58,6 +65,26 @@ func (s *UsersServer) Create(ctx context.Context, req *pb.CreateUserRequest) (*p
 	logger.Debug("User registration started")
 
 	db := s.cfg.Database
+
+	if !regexpName.MatchString(req.GetName()) {
+		logger.Error("Name validation failed")
+		return nil, status.Error(codes.InvalidArgument, "User name should start with a letter and only have letters and numbers in them")
+	}
+
+	if len(req.GetName()) < 4 {
+		logger.Error("Name validation failed")
+		return nil, status.Error(codes.InvalidArgument, "User name should have at least 4 characters in them")
+	}
+
+	if !regexpEmail.MatchString(req.GetEmail()) {
+		logger.Error("Email validation failed")
+		return nil, status.Error(codes.InvalidArgument, "Invalid email provided")
+	}
+
+	if ok1, ok2, ok3 := verifyPassword(req.GetPassword()); !ok1 || !ok2 || !ok3 {
+		logger.Error("Password validation failed")
+		return nil, status.Error(codes.InvalidArgument, "Password should be at least 8 characters with at least one number, one lowercase letter and one uppercase letter")
+	}
 
 	var existingUser pb.UserORM
 	if err := db.Where("name = ?", req.GetName()).First(&existingUser).Error; err == nil {
@@ -322,4 +349,23 @@ func (s *UsersServer) findUserByProvidedID(ctx context.Context, logger *logrus.E
 
 	logger.Error("Could not find user by any criteria")
 	return nil, status.Error(codes.NotFound, "Could not find user")
+}
+
+func verifyPassword(s string) (eightOrMore, number, upper bool) {
+	letters := 0
+	for _, c := range s {
+		switch {
+		case unicode.IsNumber(c):
+			number = true
+		case unicode.IsUpper(c):
+			upper = true
+			letters++
+		case unicode.IsLetter(c) || c == ' ':
+			letters++
+		default:
+			return false, false, false
+		}
+	}
+	eightOrMore = letters >= 8
+	return
 }
