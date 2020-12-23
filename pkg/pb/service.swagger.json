@@ -750,6 +750,28 @@
       }
     },
     "/users/{id}/currencies": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "UsersGetUserCurrencies",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GET operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceGetUserCurrenciesResponse"
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "Users"
@@ -945,6 +967,19 @@
           "items": {
             "$ref": "#/definitions/serviceUserItemInfo"
           }
+        }
+      }
+    },
+    "serviceGetUserCurrenciesResponse": {
+      "type": "object",
+      "properties": {
+        "coins": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "gems": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

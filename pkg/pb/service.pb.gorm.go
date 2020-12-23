@@ -27,6 +27,8 @@ It has these top-level messages:
 	LoginResponse
 	GrantCurrenciesRequest
 	GrantCurrenciesResponse
+	GetUserCurrenciesRequest
+	GetUserCurrenciesResponse
 	StoreItem
 	CreateStoreItemRequest
 	CreateStoreItemResponse
@@ -2116,6 +2118,12 @@ func (m *UsersDefaultServer) Login(ctx context.Context, in *LoginRequest) (*Logi
 // GrantCurrencies ...
 func (m *UsersDefaultServer) GrantCurrencies(ctx context.Context, in *GrantCurrenciesRequest) (*GrantCurrenciesResponse, error) {
 	out := &GrantCurrenciesResponse{}
+	return out, nil
+}
+
+// GetUserCurrencies ...
+func (m *UsersDefaultServer) GetUserCurrencies(ctx context.Context, in *GetUserCurrenciesRequest) (*GetUserCurrenciesResponse, error) {
+	out := &GetUserCurrenciesResponse{}
 	return out, nil
 }
 

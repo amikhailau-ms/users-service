@@ -133,6 +133,15 @@ message GrantCurrenciesRequest {
 
 message GrantCurrenciesResponse {}
 
+message GetUserCurrenciesRequest {
+  string id = 1;
+}
+
+message GetUserCurrenciesResponse {
+  int32 coins = 1;
+  int32 gems = 2;
+}
+
 service Users {
   option (gorm.server) = {
       autogen: true,
@@ -188,6 +197,12 @@ service Users {
     option (google.api.http) = {
       post: "/users/{id}/currencies"
       body: "*"
+    };
+  }
+
+  rpc GetUserCurrencies (GetUserCurrenciesRequest) returns (GetUserCurrenciesResponse) {
+    option (google.api.http) = {
+      get: "/users/{id}/currencies"
     };
   }
 }

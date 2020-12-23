@@ -309,6 +309,24 @@ func (s *UsersServer) GrantCurrencies(ctx context.Context, req *pb.GrantCurrenci
 	return &pb.GrantCurrenciesResponse{}, nil
 }
 
+func (s *UsersServer) GetUserCurrencies(ctx context.Context, req *pb.GetUserCurrenciesRequest) (*pb.GetUserCurrenciesResponse, error) {
+	logger := ctxlogrus.Extract(ctx).WithField("provided_id", req.GetId())
+	logger.Debug("Get User Currencies")
+
+	claims, _ := auth.GetAuthorizationData(ctx)
+	if !claims.IsAdmin && claims.UserId != req.GetId() && claims.UserName != req.GetId() && claims.UserEmail != req.GetId() {
+		logger.Error("User can only use this endpoint for themselves")
+		return nil, status.Error(codes.Unauthenticated, "Not authorized for another user")
+	}
+
+	usr, err := s.findUserByProvidedID(ctx, logger, req.GetId())
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetUserCurrenciesResponse{Coins: usr.GetCoins(), Gems: usr.GetGems()}, nil
+}
+
 func (s *UsersServer) hideSensitiveInfo(usr *pb.User) {
 	usr.Password = ""
 }
