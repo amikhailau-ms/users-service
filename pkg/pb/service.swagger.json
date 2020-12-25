@@ -750,6 +750,28 @@
       }
     },
     "/users/{id}/currencies": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "UsersGetUserCurrencies",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GET operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceGetUserCurrenciesResponse"
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "Users"
@@ -875,6 +897,18 @@
         "name": {
           "type": "string"
         },
+        "on_sale": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "sale_coins_price": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sale_gems_price": {
+          "type": "integer",
+          "format": "int32"
+        },
         "type": {
           "type": "integer",
           "format": "int32"
@@ -933,6 +967,19 @@
           "items": {
             "$ref": "#/definitions/serviceUserItemInfo"
           }
+        }
+      }
+    },
+    "serviceGetUserCurrenciesResponse": {
+      "type": "object",
+      "properties": {
+        "coins": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "gems": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -1034,6 +1081,9 @@
         },
         "token": {
           "type": "string"
+        },
+        "user_id": {
+          "type": "string"
         }
       }
     },
@@ -1114,6 +1164,18 @@
         },
         "name": {
           "type": "string"
+        },
+        "on_sale": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "sale_coins_price": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "sale_gems_price": {
+          "type": "integer",
+          "format": "int32"
         },
         "type": {
           "type": "integer",

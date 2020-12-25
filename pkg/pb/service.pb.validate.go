@@ -1060,6 +1060,8 @@ func (m *LoginResponse) Validate() error {
 
 	// no validation rules for IsAdmin
 
+	// no validation rules for UserId
+
 	return nil
 }
 
@@ -1257,6 +1259,146 @@ var _ interface {
 	ErrorName() string
 } = GrantCurrenciesResponseValidationError{}
 
+// Validate checks the field values on GetUserCurrenciesRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *GetUserCurrenciesRequest) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Id
+
+	return nil
+}
+
+// GetUserCurrenciesRequestValidationError is the validation error returned by
+// GetUserCurrenciesRequest.Validate if the designated constraints aren't met.
+type GetUserCurrenciesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetUserCurrenciesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetUserCurrenciesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetUserCurrenciesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetUserCurrenciesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetUserCurrenciesRequestValidationError) ErrorName() string {
+	return "GetUserCurrenciesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetUserCurrenciesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetUserCurrenciesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetUserCurrenciesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetUserCurrenciesRequestValidationError{}
+
+// Validate checks the field values on GetUserCurrenciesResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *GetUserCurrenciesResponse) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for Coins
+
+	// no validation rules for Gems
+
+	return nil
+}
+
+// GetUserCurrenciesResponseValidationError is the validation error returned by
+// GetUserCurrenciesResponse.Validate if the designated constraints aren't met.
+type GetUserCurrenciesResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetUserCurrenciesResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetUserCurrenciesResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetUserCurrenciesResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetUserCurrenciesResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetUserCurrenciesResponseValidationError) ErrorName() string {
+	return "GetUserCurrenciesResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetUserCurrenciesResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetUserCurrenciesResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetUserCurrenciesResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetUserCurrenciesResponseValidationError{}
+
 // Validate checks the field values on StoreItem with the rules defined in the
 // proto definition for this message. If any rules are violated, an error is returned.
 func (m *StoreItem) Validate() error {
@@ -1277,6 +1419,12 @@ func (m *StoreItem) Validate() error {
 	// no validation rules for GemsPrice
 
 	// no validation rules for ImageId
+
+	// no validation rules for OnSale
+
+	// no validation rules for SaleCoinsPrice
+
+	// no validation rules for SaleGemsPrice
 
 	return nil
 }
@@ -1354,6 +1502,12 @@ func (m *CreateStoreItemRequest) Validate() error {
 	// no validation rules for GemsPrice
 
 	// no validation rules for ImageId
+
+	// no validation rules for OnSale
+
+	// no validation rules for SaleCoinsPrice
+
+	// no validation rules for SaleGemsPrice
 
 	return nil
 }

@@ -122,6 +122,7 @@ message LoginResponse {
   string token = 1;
   google.protobuf.Timestamp expires_at = 2;
   bool isAdmin = 3;
+  string user_id = 4;
 }
 
 message GrantCurrenciesRequest {
@@ -131,6 +132,15 @@ message GrantCurrenciesRequest {
 }
 
 message GrantCurrenciesResponse {}
+
+message GetUserCurrenciesRequest {
+  string id = 1;
+}
+
+message GetUserCurrenciesResponse {
+  int32 coins = 1;
+  int32 gems = 2;
+}
 
 service Users {
   option (gorm.server) = {
@@ -189,6 +199,12 @@ service Users {
       body: "*"
     };
   }
+
+  rpc GetUserCurrencies (GetUserCurrenciesRequest) returns (GetUserCurrenciesResponse) {
+    option (google.api.http) = {
+      get: "/users/{id}/currencies"
+    };
+  }
 }
 
 
@@ -205,6 +221,9 @@ message StoreItem {
   int32 coins_price = 5;
   int32 gems_price = 6;
   string image_id = 7;
+  bool on_sale = 8;
+  int32 sale_coins_price = 9;
+  int32 sale_gems_price = 10;
 }
 
 message CreateStoreItemRequest {
@@ -214,6 +233,9 @@ message CreateStoreItemRequest {
   int32 coins_price = 4;
   int32 gems_price = 5;
   string image_id = 6;
+  bool on_sale = 7;
+  int32 sale_coins_price = 8;
+  int32 sale_gems_price = 9;
 }
 
 message CreateStoreItemResponse {
