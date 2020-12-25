@@ -260,6 +260,61 @@ func (s *StoreItemsServer) BuyByUser(ctx context.Context, req *pb.BuyByUserReque
 	return &pb.BuyByUserResponse{}, nil
 }
 
+func (s *StoreItemsServer) ThrowAwayByUser(ctx context.Context, req *pb.ThrowAwayByUserRequest) (*pb.ThrowAwayByUserResponse, error) {
+	logger := ctxlogrus.Extract(ctx).WithFields(logrus.Fields{
+		"user_id": req.GetUserId(),
+		"item_id": req.GetItemId(),
+	})
+	logger.Debug("Throwing away item")
+
+	var usr pb.UserORM
+	var item pb.StoreItemORM
+
+	if err := s.cfg.Database.Where("id = ?", req.GetUserId()).First(&usr).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			logger.Error("User not found")
+			return nil, status.Error(codes.NotFound, "User not found")
+		}
+		logger.WithError(err).Error("Could not find user")
+		return nil, status.Error(codes.Internal, "Could not find user")
+	}
+
+	if err := s.cfg.Database.Where("id = ?", req.GetItemId()).First(&item).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			logger.Error("Item not found")
+			return nil, status.Error(codes.NotFound, "Item not found")
+		}
+		logger.WithError(err).Error("Could not find item")
+		return nil, status.Error(codes.Internal, "Could not find item")
+	}
+
+	if item.OnSale {
+		usr.Gems += item.SaleGemsPrice
+		usr.Coins += item.SaleCoinsPrice
+	} else {
+		usr.Gems += item.GemsPrice
+		usr.Coins += item.CoinsPrice
+	}
+
+	txnDB := s.cfg.Database.Begin()
+
+	if err := txnDB.Save(&usr).Error; err != nil {
+		txnDB.Rollback()
+		logger.WithError(err).Error("Could not proceed with the operation")
+		return nil, status.Error(codes.Internal, "Could not proceed with the operation")
+	}
+
+	if err := txnDB.Model(&usr).Association("Items").Delete(&item).Error; err != nil {
+		txnDB.Rollback()
+		logger.WithError(err).Error("Could not proceed with the operation")
+		return nil, status.Error(codes.Internal, "Could not proceed with the operation")
+	}
+
+	txnDB.Commit()
+
+	return &pb.ThrowAwayByUserResponse{}, nil
+}
+
 func (s *StoreItemsServer) GetUserItemsIds(ctx context.Context, req *pb.GetUserItemsIdsRequest) (*pb.GetUserItemsIdsResponse, error) {
 	logger := ctxlogrus.Extract(ctx).WithField("user_id", req.GetUserId())
 	logger.Debug("GetUserItemsIds")

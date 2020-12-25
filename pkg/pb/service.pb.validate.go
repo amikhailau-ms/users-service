@@ -2426,6 +2426,144 @@ var _ interface {
 	ErrorName() string
 } = BuyByUserResponseValidationError{}
 
+// Validate checks the field values on ThrowAwayByUserRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *ThrowAwayByUserRequest) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	// no validation rules for UserId
+
+	// no validation rules for ItemId
+
+	return nil
+}
+
+// ThrowAwayByUserRequestValidationError is the validation error returned by
+// ThrowAwayByUserRequest.Validate if the designated constraints aren't met.
+type ThrowAwayByUserRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ThrowAwayByUserRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ThrowAwayByUserRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ThrowAwayByUserRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ThrowAwayByUserRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ThrowAwayByUserRequestValidationError) ErrorName() string {
+	return "ThrowAwayByUserRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ThrowAwayByUserRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sThrowAwayByUserRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ThrowAwayByUserRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ThrowAwayByUserRequestValidationError{}
+
+// Validate checks the field values on ThrowAwayByUserResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, an error is returned.
+func (m *ThrowAwayByUserResponse) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// ThrowAwayByUserResponseValidationError is the validation error returned by
+// ThrowAwayByUserResponse.Validate if the designated constraints aren't met.
+type ThrowAwayByUserResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ThrowAwayByUserResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ThrowAwayByUserResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ThrowAwayByUserResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ThrowAwayByUserResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ThrowAwayByUserResponseValidationError) ErrorName() string {
+	return "ThrowAwayByUserResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ThrowAwayByUserResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sThrowAwayByUserResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ThrowAwayByUserResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ThrowAwayByUserResponseValidationError{}
+
 // Validate checks the field values on EquipByUserRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, an error is returned.

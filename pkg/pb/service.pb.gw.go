@@ -1074,6 +1074,40 @@ func local_request_StoreItems_EquipByUser_0(ctx context.Context, marshaler runti
 
 }
 
+func request_StoreItems_ThrowAwayByUser_0(ctx context.Context, marshaler runtime.Marshaler, client StoreItemsClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ThrowAwayByUserRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.ThrowAwayByUser(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_StoreItems_ThrowAwayByUser_0(ctx context.Context, marshaler runtime.Marshaler, server StoreItemsServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ThrowAwayByUserRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.ThrowAwayByUser(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 func request_UsersStats_GetStats_0(ctx context.Context, marshaler runtime.Marshaler, client UsersStatsClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq ReadUserStatsRequest
 	var metadata runtime.ServerMetadata
@@ -2016,6 +2050,29 @@ func RegisterStoreItemsHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 
 	})
 
+	mux.Handle("POST", pattern_StoreItems_ThrowAwayByUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_StoreItems_ThrowAwayByUser_0(rctx, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_StoreItems_ThrowAwayByUser_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	return nil
 }
 
@@ -2789,6 +2846,26 @@ func RegisterStoreItemsHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 
 	})
 
+	mux.Handle("POST", pattern_StoreItems_ThrowAwayByUser_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_StoreItems_ThrowAwayByUser_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_StoreItems_ThrowAwayByUser_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	return nil
 }
 
@@ -2812,6 +2889,8 @@ var (
 	pattern_StoreItems_GetEquippedUserItemsIds_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"store_items", "user", "user_id", "equipped"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_StoreItems_EquipByUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"store_items", "equip"}, "", runtime.AssumeColonVerbOpt(true)))
+
+	pattern_StoreItems_ThrowAwayByUser_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"store_items", "throwaway"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (
@@ -2834,6 +2913,8 @@ var (
 	forward_StoreItems_GetEquippedUserItemsIds_0 = runtime.ForwardResponseMessage
 
 	forward_StoreItems_EquipByUser_0 = runtime.ForwardResponseMessage
+
+	forward_StoreItems_ThrowAwayByUser_0 = runtime.ForwardResponseMessage
 )
 
 // RegisterUsersStatsHandlerFromEndpoint is same as RegisterUsersStatsHandler but

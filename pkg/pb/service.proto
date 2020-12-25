@@ -284,6 +284,13 @@ message BuyByUserRequest {
 
 message BuyByUserResponse {}
 
+message ThrowAwayByUserRequest {
+  string user_id = 1;
+  string item_id = 2;
+}
+
+message ThrowAwayByUserResponse {}
+
 message EquipByUserRequest {
   string user_id = 1;
   string item_id = 2;
@@ -378,6 +385,13 @@ service StoreItems {
   rpc EquipByUser (EquipByUserRequest) returns (EquipByUserResponse) {
     option (google.api.http) = {
             post: "/store_items/equip"
+            body: "*"
+        };
+  }
+
+  rpc ThrowAwayByUser (ThrowAwayByUserRequest) returns (ThrowAwayByUserResponse) {
+    option (google.api.http) = {
+            post: "/store_items/throwaway"
             body: "*"
         };
   }

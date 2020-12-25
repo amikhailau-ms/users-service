@@ -391,6 +391,32 @@
         }
       }
     },
+    "/store_items/throwaway": {
+      "post": {
+        "tags": [
+          "StoreItems"
+        ],
+        "operationId": "StoreItemsThrowAwayByUser",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceThrowAwayByUserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "POST operation response",
+            "schema": {
+              "$ref": "#/definitions/serviceThrowAwayByUserResponse"
+            }
+          }
+        }
+      }
+    },
     "/store_items/user/{user_id}": {
       "get": {
         "tags": [
@@ -1182,6 +1208,20 @@
           "format": "int32"
         }
       }
+    },
+    "serviceThrowAwayByUserRequest": {
+      "type": "object",
+      "properties": {
+        "item_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "serviceThrowAwayByUserResponse": {
+      "type": "object"
     },
     "serviceUpdateNewsRequest": {
       "type": "object",
