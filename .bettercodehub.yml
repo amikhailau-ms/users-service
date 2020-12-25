@@ -3,3 +3,7 @@ languages:
   - go
 exclude:
   - /pkg/pb/.*
+  - /vendor/.*
+  - /docker/.*
+  - /db/.*
+  - /helm/.*
