@@ -15,7 +15,7 @@ import (
 
 var (
 	svcEndpoints = []string{"Users/GrantCurrencies", "UsersService/GetVersion", "StoreItems/Create", "StoreItems/Update",
-		"StoreItems/Delete", "UsersStats/UpdateStats", "NewsService/Create", "NewsService/Update"}
+		"StoreItems/ThrowAwayByUser", "StoreItems/Delete", "UsersStats/UpdateStats", "NewsService/Create", "NewsService/Update"}
 )
 
 func UnaryServerInterceptor() grpc.UnaryServerInterceptor {

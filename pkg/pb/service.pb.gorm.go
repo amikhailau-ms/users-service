@@ -42,6 +42,8 @@ It has these top-level messages:
 	ListStoreItemsResponse
 	BuyByUserRequest
 	BuyByUserResponse
+	ThrowAwayByUserRequest
+	ThrowAwayByUserResponse
 	EquipByUserRequest
 	EquipByUserResponse
 	GetUserItemsIdsRequest
@@ -2312,6 +2314,12 @@ func (m *StoreItemsDefaultServer) GetEquippedUserItemsIds(ctx context.Context, i
 // EquipByUser ...
 func (m *StoreItemsDefaultServer) EquipByUser(ctx context.Context, in *EquipByUserRequest) (*EquipByUserResponse, error) {
 	out := &EquipByUserResponse{}
+	return out, nil
+}
+
+// ThrowAwayByUser ...
+func (m *StoreItemsDefaultServer) ThrowAwayByUser(ctx context.Context, in *ThrowAwayByUserRequest) (*ThrowAwayByUserResponse, error) {
+	out := &ThrowAwayByUserResponse{}
 	return out, nil
 }
 
