@@ -375,6 +375,7 @@ func verifyPassword(s string) (eightOrMore, number, upper bool) {
 		switch {
 		case unicode.IsNumber(c):
 			number = true
+			letters++
 		case unicode.IsUpper(c):
 			upper = true
 			letters++
