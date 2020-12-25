@@ -367,7 +367,11 @@ func (s *StoreItemsServer) EquipByUser(ctx context.Context, req *pb.EquipByUserR
 	}
 
 	if found && itemEquippedId == item.GetResult().GetId() {
-		logger.Debug("Item has been already equipped")
+		logger.Debug("Item has been already equipped, deequipping it")
+		if _, err := s.cfg.Database.DB().Exec(deequipQuery, req.GetUserId(), itemEquippedId); err != nil {
+			logger.WithError(err).Error("Could not deequip item")
+			return nil, status.Error(codes.Internal, "Could not deequip item")
+		}
 		return &pb.EquipByUserResponse{}, nil
 	}
 
