@@ -70,6 +70,7 @@ func TestUsers(t *testing.T) {
 	sqlCreateUser := `INSERT INTO "users" ("coins","email","gems","id","name","password") VALUES ($1,$2,$3,$4,$5,$6) RETURNING "users"."id"`
 	sqlCreateStats := `INSERT INTO "user_stats" ("games","kills","top5","user_id","wins") VALUES ($1,$2,$3,$4,$5) RETURNING "user_stats"."id"`
 	sqlDeleteUser := `DELETE FROM "users"  WHERE (id = $1)`
+	sqlUpdateCurr := `UPDATE "users" SET "coins" = $1, "gems" = $2 WHERE "users"."id" = $3`
 
 	t.Run("Create User - positive", func(t *testing.T) {
 
@@ -198,6 +199,61 @@ func TestUsers(t *testing.T) {
 		})
 		if err != nil {
 			t.Fatalf("error deleting user: %v", err)
+		}
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Fatalf("mock shows different data: %v", err)
+		}
+	})
+
+	t.Run("Login - negative", func(t *testing.T) {
+		rows := sqlmock.NewRows([]string{"id", "email", "password", "created_at", "updated_at", "name", "coins", "gems", "is_admin"}).
+			AddRow("some-id", "someemail@email.com", "a19696e33e7a2748f11002945d2f8abab1f9c456416df269f903e109507a095f", "2020-01-01 01:05:57", "2020-01-01 01:05:57", "some-name", 0, 0, 'f')
+		mock.ExpectQuery(regexp.QuoteMeta(sqlSearchID)).WithArgs("some-name").WillReturnRows(sqlmock.NewRows(nil))
+		mock.ExpectQuery(regexp.QuoteMeta(sqlSearchName)).WithArgs("some-name").WillReturnRows(rows)
+		_, err := usrClient.Login(ctx, &pb.LoginRequest{
+			Id:       "some-name",
+			Password: "Password1",
+		})
+		if err == nil {
+			t.Fatalf("expected error")
+		}
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Fatalf("mock shows different data: %v", err)
+		}
+	})
+
+	t.Run("Get User Currencies - positive", func(t *testing.T) {
+		rows := sqlmock.NewRows([]string{"id", "email", "password", "created_at", "updated_at", "name", "coins", "gems", "is_admin"}).
+			AddRow("some-id", "someemail@email.com", "some-hash", "2020-01-01 01:05:57", "2020-01-01 01:05:57", "some-name", 0, 0, 'f')
+		mock.ExpectQuery(regexp.QuoteMeta(sqlSearchID)).WithArgs("some-name").WillReturnRows(sqlmock.NewRows(nil))
+		mock.ExpectQuery(regexp.QuoteMeta(sqlSearchName)).WithArgs("some-name").WillReturnRows(rows)
+		_, err := usrClient.GetUserCurrencies(ctx, &pb.GetUserCurrenciesRequest{
+			Id: "some-name",
+		})
+		if err != nil {
+			t.Fatalf("error reading user: %v", err)
+		}
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Fatalf("mock shows different data: %v", err)
+		}
+	})
+
+	t.Run("Grant Currencies - positive", func(t *testing.T) {
+		req := &pb.GrantCurrenciesRequest{
+			Id:       "some-name",
+			AddCoins: 100,
+			AddGems:  100,
+		}
+		rows := sqlmock.NewRows([]string{"id", "email", "password", "created_at", "updated_at", "name", "coins", "gems", "is_admin"}).
+			AddRow("some-id", "someemail@email.com", "some-hash", "2020-01-01 01:05:57", "2020-01-01 01:05:57", "some-name", 0, 0, 'f')
+		mock.ExpectQuery(regexp.QuoteMeta(sqlSearchID)).WithArgs("some-name").WillReturnRows(sqlmock.NewRows(nil))
+		mock.ExpectQuery(regexp.QuoteMeta(sqlSearchName)).WithArgs("some-name").WillReturnRows(rows)
+		mock.ExpectBegin()
+		mock.ExpectExec(regexp.QuoteMeta(sqlUpdateCurr)).WithArgs(req.AddCoins, req.AddGems, "some-id").WillReturnResult(sqlmock.NewResult(1, 1))
+		mock.ExpectCommit()
+		_, err := usrClient.GrantCurrencies(ctx, req)
+		if err != nil {
+			t.Fatalf("error granting currencies to user: %v", err)
 		}
 		if err := mock.ExpectationsWereMet(); err != nil {
 			t.Fatalf("mock shows different data: %v", err)
