@@ -7,3 +7,4 @@ exclude:
   - /docker/.*
   - /db/.*
   - /helm/.*
+  - /cmd/.*
